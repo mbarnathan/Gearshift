@@ -16,6 +16,7 @@ from evanesca.common.exceptions.argument_exceptions import check_true
 from evanesca.common.logging.elog import L
 from firebase_admin import firestore, credentials
 from flask import Response, request, abort, json, jsonify
+from pydash import pluck
 
 APP_SECRET = bytearray("h0uy9dd01xzl5k8", "utf-8")
 ACCOUNT_TOKEN = "EdTy1lJN1oIAAAAAAAAAkAqpN88_8VcZ2EgdRNHDV-9jqPbQjbNvO-sUM9537YqY"
@@ -25,12 +26,13 @@ ROOT = ""
 FIREBASE_PROJECT = "gearshift"
 
 
+# noinspection PyMethodMayBeStatic
 @api("/dropbox")
 class Dropbox(ApiSet):
     SALT = "h*rRcBsU0Cd`e*~9"
 
     def __init__(self, *args, **kwargs):
-        super(Dropbox, self).__init__(*args, **kwargs)
+        super(self.__class__, self).__init__(*args, **kwargs)
         self.last_cursor = None
 
     @staticmethod
@@ -39,23 +41,21 @@ class Dropbox(ApiSet):
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred, {'projectId': FIREBASE_PROJECT})
 
-    @staticmethod
     @endpoint.route("/webhook", methods=["GET"], required_params=["challenge"])
-    async def verify():
+    async def verify(self):
         """Respond to the webhook verification by echoing back the challenge parameter."""
         resp = Response(request.args.get('challenge'))
         resp.headers['Content-Type'] = 'text/plain'
         resp.headers['X-Content-Type-Options'] = 'nosniff'
         return resp
 
-    @staticmethod
     @endpoint.route('/webhook', methods=['POST'])
-    async def file_updated():
+    async def file_updated(self):
         if not await Dropbox.verify_request(request):
             abort(403)
 
         accounts = json.loads(await request.data)['list_folder']['accounts']
-        user_futures = [asyncio.create_task(Dropbox.process_user(account)) for account in accounts]
+        user_futures = [asyncio.create_task(self.process_user(account)) for account in accounts]
         result = await asyncio.gather(*user_futures)
         return jsonify(result)
 
@@ -65,10 +65,9 @@ class Dropbox(ApiSet):
         return hmac.compare_digest(signature,
                                    hmac.new(APP_SECRET, await _request.data, sha256).hexdigest())
 
-    @staticmethod
-    async def process_user(dropbox_account):
+    async def process_user(self, dropbox_account):
         check_true(dropbox_account)
-        # encrypted_account = Dropbox.encrypt(dropbox_account)
+        # encrypted_account = self.encrypt(dropbox_account)
 
         firestore_client = firestore.client()
 
@@ -77,16 +76,26 @@ class Dropbox(ApiSet):
             user_data = _user_path.get()
 
             # Persist files to Firestore. A FS trigger function will add them to the search index.
-            async for file in await Dropbox.fetch_changes(user_data):
+            async for file in await self.fetch_changes(user_data):
                 file = await file
-                file_id = file["id"]
-                file_path = user_file_path.document(file_id)
-                if file.get("deleted", False):
+                file_id = file.get("id")
+                if file_id:
+                    file_refs = [user_file_path.document(file_id)]
+                else:
+                    match_path = file.get("path_display")
+                    file_refs = user_file_path.where("path_display", "==", match_path).get()
+                    file_refs = pluck(file_refs, "reference")
+
+                batch = firestore_client.batch()
+                if file.get(".tag") == "deleted":
                     # This file was just deleted from Dropbox; delete it from Firestore too.
-                    file_path.delete()
+                    for file_ref in file_refs:
+                        batch.delete(file_ref)
                 else:
                     sanitized = OrderedDict((k.replace(".", ""), v) for k, v in file.items())
-                    file_path.set(sanitized)
+                    for file_ref in file_refs:
+                        batch.set(file_ref, sanitized)
+                batch.commit()
 
         user_path = firestore_client \
             .collection("services") \
@@ -96,6 +105,8 @@ class Dropbox(ApiSet):
             # .document(encrypted_account)
 
         await update_user_files(user_path)
+        if self.last_cursor:
+            user_path.set({"cursor": self.last_cursor}, merge=True)
 
         # Steps:
         # 1. Grab the last lease and cursor from Firestore
@@ -103,24 +114,26 @@ class Dropbox(ApiSet):
         # 3. Update the lease and cursor.
         # 4. (Re)schedule the lease to index in the next batch.
 
-    @staticmethod
-    async def fetch_changes(last_snapshot):
-        last_lease = last_snapshot.to_dict()
-        if last_lease:
+    async def fetch_changes(self, last_snapshot):
+        last_cursor = last_snapshot.to_dict()
+        if not last_cursor and self.last_cursor:
+            last_cursor = {"cursor": self.last_cursor}
+
+        if last_cursor:
+            last_cursor = last_cursor.get("cursor")
             file_obj = namedtuple("DropboxSnapshot", ["cursor", "has_more"])
-            file_obj.cursor = last_lease.get("cursor")
+            file_obj.cursor = last_cursor
             file_obj.has_more = True
         else:
             file_obj = None
-        return Dropbox.visit_files(file_obj=file_obj)
+        return self.visit_files(file_obj=file_obj)
 
     @staticmethod
     def encrypt(plaintext):
         return blake2b(salt=Dropbox.SALT).update(plaintext).hexdigest()
 
-    @staticmethod
-    async def visit_files(visitor=None, file_obj=None, loop=None):
-        visitor = visitor or Dropbox.process_file
+    async def visit_files(self, visitor=None, file_obj=None, loop=None):
+        visitor = visitor or self.process_file
         loop = loop or asyncio.get_event_loop()
 
         # TODO: Create this elsewhere?
@@ -128,17 +141,17 @@ class Dropbox(ApiSet):
 
         while True:
             # Dropbox doesn't have an async interface yet, so run the dbx calls in a thread pool.
-            list_once = partial(Dropbox.list_once, dbx, file_obj=file_obj)
+            list_once = partial(self.list_once, dbx, file_obj=file_obj)
             file_obj = await loop.run_in_executor(None, list_once)
 
             if file_obj:
+                self.last_cursor = file_obj.cursor or self.last_cursor
                 for entry in file_obj.entries:
                     yield asyncio.create_task(visitor(entry))
             else:
                 break
 
-    @staticmethod
-    def list_once(dbx, path=ROOT, limit=LIMIT_PER_CALL, file_obj=None):
+    def list_once(self, dbx, path=ROOT, limit=LIMIT_PER_CALL, file_obj=None):
         try:
             if file_obj:
                 if not file_obj.has_more:
@@ -147,37 +160,34 @@ class Dropbox(ApiSet):
             return dbx.files_list_folder(path=path, limit=limit,
                                          include_media_info=True, recursive=True)
         except dropbox.exceptions.ApiError as err:
-            # TODO(mb): Retry logic needed?
+            # No retry logic needed because Dropbox itself will retry a few requests.
             L.warning('Folder listing failed for', path, '-- assumed empty:', err)
             return None
 
-    @staticmethod
-    async def process_file(entry_stone):
+    async def process_file(self, entry_stone):
         entry = stone_serializers.json_compat_obj_encode(Metadata_validator, entry_stone)
         try:
             metadata = entry_stone.media_info.get_metadata()
             if isinstance(metadata, PhotoMetadata):
-                return await Dropbox.process_photo(entry)
+                return await self.process_photo(entry)
             elif isinstance(metadata, DeletedMetadata):
-                return await Dropbox.process_deleted(entry)
+                return await self.process_deleted(entry)
         except AttributeError:
             return entry
 
-    @staticmethod
-    async def process_photo(entry):
+    async def process_photo(self, entry):
         entry["type"] = "image"
 
         # TODO(mb): schedule a tagging job here.
         return entry
 
-    @staticmethod
-    async def process_deleted(entry):
+    async def process_deleted(self, entry):
         entry["deleted"] = True
         return entry
 
 
 async def main(argv):
-    files = await asyncio.gather(*[file async for file in Dropbox.visit_files()])
+    files = await asyncio.gather(*[file async for file in Dropbox().visit_files()])
     print(files)
     return 0
 
