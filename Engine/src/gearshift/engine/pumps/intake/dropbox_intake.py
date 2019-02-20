@@ -6,27 +6,29 @@ from _sha256 import sha256
 from functools import partial
 
 import dropbox
+import firebase_admin
 from dropbox import stone_serializers
 from dropbox.files import PhotoMetadata, DeletedMetadata, Metadata_validator
 from evanesca.api.api import api, endpoint
 from evanesca.api.api_set import ApiSet
 from evanesca.common.exceptions.argument_exceptions import check_true
-from firebase_admin import firestore
-from flask import Response, request, abort, json
+from evanesca.common.logging.elog import L
+from firebase_admin import firestore, credentials
+from flask import Response, request, abort, json, jsonify
 
-APP_SECRET = ""
+APP_SECRET = bytearray("h0uy9dd01xzl5k8", "utf-8")
 ACCOUNT_TOKEN = "EdTy1lJN1oIAAAAAAAAAkAqpN88_8VcZ2EgdRNHDV-9jqPbQjbNvO-sUM9537YqY"
 LIMIT_PER_CALL = 500
 LEASE_EXPIRY_MS = 60000
 ROOT = ""
 
 
-@api("dropbox")
+@api("/dropbox")
 class Dropbox(ApiSet):
     SALT = "h*rRcBsU0Cd`e*~9"
 
     @staticmethod
-    @endpoint.route("/verify", methods=["GET"], required_params=["challenge"])
+    @endpoint.route("/webhook", methods=["GET"], required_params=["challenge"])
     async def verify():
         """Respond to the webhook verification by echoing back the challenge parameter."""
         resp = Response(request.args.get('challenge'))
@@ -37,23 +39,26 @@ class Dropbox(ApiSet):
     @staticmethod
     @endpoint.route('/webhook', methods=['POST'])
     async def file_updated():
-        if not Dropbox.verify_request(request):
+        if not await Dropbox.verify_request(request):
             abort(403)
 
-        accounts = json.loads(request.data)['list_folder']['accounts']
+        accounts = json.loads(await request.data)['list_folder']['accounts']
         user_futures = [asyncio.create_task(Dropbox.process_user(account)) for account in accounts]
-        await asyncio.gather(*user_futures)
+        result = await asyncio.gather(*user_futures)
+        return jsonify(result)
 
     @staticmethod
-    def verify_request(_request):
+    async def verify_request(_request):
         signature = _request.headers.get('X-Dropbox-Signature')
         return hmac.compare_digest(signature,
-                                   hmac.new(APP_SECRET, request.data, sha256).hexdigest())
+                                   hmac.new(APP_SECRET, await _request.data, sha256).hexdigest())
 
     @staticmethod
     async def process_user(dropbox_account):
         check_true(dropbox_account)
         # encrypted_account = Dropbox.encrypt(dropbox_account)
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {'projectId': 'gearshift'})
         firestore_client = firestore.client()
 
         @firestore.transactional
@@ -102,7 +107,7 @@ class Dropbox(ApiSet):
     @staticmethod
     async def visit_files(visitor=None, file_obj=None, loop=None):
         visitor = visitor or Dropbox.process_file
-        loop = loop or asyncio.get_running_loop()
+        loop = loop or asyncio.get_event_loop()
 
         # TODO: Create this elsewhere?
         dbx = dropbox.Dropbox(ACCOUNT_TOKEN)
@@ -129,7 +134,7 @@ class Dropbox(ApiSet):
                                          include_media_info=True, recursive=True)
         except dropbox.exceptions.ApiError as err:
             # TODO(mb): Retry logic needed?
-            print('Folder listing failed for', path, '-- assumed empty:', err)
+            L.warning('Folder listing failed for', path, '-- assumed empty:', err)
             return None
 
     @staticmethod
@@ -158,13 +163,10 @@ class Dropbox(ApiSet):
 
 
 async def main(argv):
-    dbx = dropbox.Dropbox(ACCOUNT_TOKEN)
-    loop = asyncio.get_running_loop()
-    files = [await file async for file in Dropbox.visit_files()]
+    files = await asyncio.gather(*[file async for file in Dropbox.visit_files()])
     print(files)
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(asyncio.run(main(sys.argv)))
-
