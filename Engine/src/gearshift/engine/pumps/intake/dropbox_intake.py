@@ -3,6 +3,7 @@ import hmac
 import sys
 from _blake2 import blake2b
 from _sha256 import sha256
+from collections import namedtuple, OrderedDict
 from functools import partial
 
 import dropbox
@@ -21,11 +22,22 @@ ACCOUNT_TOKEN = "EdTy1lJN1oIAAAAAAAAAkAqpN88_8VcZ2EgdRNHDV-9jqPbQjbNvO-sUM9537Yq
 LIMIT_PER_CALL = 500
 LEASE_EXPIRY_MS = 60000
 ROOT = ""
+FIREBASE_PROJECT = "gearshift"
 
 
 @api("/dropbox")
 class Dropbox(ApiSet):
     SALT = "h*rRcBsU0Cd`e*~9"
+
+    def __init__(self, *args, **kwargs):
+        super(Dropbox, self).__init__(*args, **kwargs)
+        self.last_cursor = None
+
+    @staticmethod
+    @endpoint.before_app_first_request
+    def setup():
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {'projectId': FIREBASE_PROJECT})
 
     @staticmethod
     @endpoint.route("/webhook", methods=["GET"], required_params=["challenge"])
@@ -57,24 +69,24 @@ class Dropbox(ApiSet):
     async def process_user(dropbox_account):
         check_true(dropbox_account)
         # encrypted_account = Dropbox.encrypt(dropbox_account)
-        cred = credentials.ApplicationDefault()
-        firebase_admin.initialize_app(cred, {'projectId': 'gearshift'})
+
         firestore_client = firestore.client()
 
-        @firestore.transactional
-        async def update_user_files(transaction, _user_path):
-            _user_file_path = _user_path.collection("files")
-            user_data = _user_path.get(transaction=transaction)
+        async def update_user_files(_user_path):
+            user_file_path = _user_path.collection("files")
+            user_data = _user_path.get()
 
             # Persist files to Firestore. A FS trigger function will add them to the search index.
-            async for file in Dropbox.fetch_changes(user_data):
+            async for file in await Dropbox.fetch_changes(user_data):
+                file = await file
                 file_id = file["id"]
-                file_path = _user_path.document(file_id)
-                if file.get("deleted", default=False):
+                file_path = user_file_path.document(file_id)
+                if file.get("deleted", False):
                     # This file was just deleted from Dropbox; delete it from Firestore too.
-                    transaction.delete(file_path)
+                    file_path.delete()
                 else:
-                    transaction.update(file_path, file)
+                    sanitized = OrderedDict((k.replace(".", ""), v) for k, v in file.items())
+                    file_path.set(sanitized)
 
         user_path = firestore_client \
             .collection("services") \
@@ -83,7 +95,7 @@ class Dropbox(ApiSet):
             .document(dropbox_account)
             # .document(encrypted_account)
 
-        await update_user_files(firestore_client.transaction(), user_path)
+        await update_user_files(user_path)
 
         # Steps:
         # 1. Grab the last lease and cursor from Firestore
@@ -94,10 +106,12 @@ class Dropbox(ApiSet):
     @staticmethod
     async def fetch_changes(last_snapshot):
         last_lease = last_snapshot.to_dict()
-        file_obj = {
-            "cursor": last_lease.get("cursor"),
-            "has_more": True
-        }
+        if last_lease:
+            file_obj = namedtuple("DropboxSnapshot", ["cursor", "has_more"])
+            file_obj.cursor = last_lease.get("cursor")
+            file_obj.has_more = True
+        else:
+            file_obj = None
         return Dropbox.visit_files(file_obj=file_obj)
 
     @staticmethod
