@@ -53,6 +53,7 @@ setup(
         "firebase_admin",
         "marshmallow",
         "marshmallow_enum",
+        "orderedmultidict",
         "nose",
     ],
 )

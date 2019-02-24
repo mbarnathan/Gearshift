@@ -1,5 +1,0 @@
-dropbox
-pydash
-evanesca
-flask
-firebase_admin
