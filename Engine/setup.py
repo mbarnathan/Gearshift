@@ -51,6 +51,8 @@ setup(
         "dropbox",
         "pydash",
         "firebase_admin",
-        "nose"
+        "marshmallow",
+        "marshmallow_enum",
+        "nose",
     ],
 )
