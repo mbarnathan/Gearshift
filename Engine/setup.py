@@ -51,9 +51,10 @@ setup(
         "dropbox",
         "pydash",
         "firebase_admin",
-        "marshmallow",
-        "marshmallow_enum",
+        "attribs",
         "orderedmultidict",
+        "mimetypes",
+        "arrow",
         "nose",
     ],
 )

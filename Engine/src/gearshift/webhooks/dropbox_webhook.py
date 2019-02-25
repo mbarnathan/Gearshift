@@ -1,15 +1,9 @@
 import asyncio
 import hmac
-import sys
-from _blake2 import blake2b
 from _sha256 import sha256
-from collections import namedtuple, OrderedDict
-from functools import partial
+from collections import OrderedDict
 
-import dropbox
 import firebase_admin
-from dropbox import stone_serializers
-from dropbox.files import PhotoMetadata, DeletedMetadata, Metadata_validator
 from evanesca.api.api import api, endpoint
 from evanesca.api.api_set import ApiSet
 from evanesca.common.exceptions.argument_exceptions import check_true
@@ -18,21 +12,15 @@ from firebase_admin import firestore, credentials
 from flask import Response, request, abort, json, jsonify
 from pydash import pluck
 
-APP_SECRET = bytearray("h0uy9dd01xzl5k8", "utf-8")
-ACCOUNT_TOKEN = "EdTy1lJN1oIAAAAAAAAAkAqpN88_8VcZ2EgdRNHDV-9jqPbQjbNvO-sUM9537YqY"
-LIMIT_PER_CALL = 500
+from gearshift.engine.pumps.intake.dropbox.client import DropboxClient
+
 LEASE_EXPIRY_MS = 60000
-ROOT = ""
 FIREBASE_PROJECT = "gearshift"
+APP_SECRET = bytearray("h0uy9dd01xzl5k8", "utf-8")
 
 
-# noinspection PyMethodMayBeStatic
 @api("/dropbox")
 class Dropbox(ApiSet):
-
-    def __init__(self, *args, **kwargs):
-        super(self.__class__, self).__init__(*args, **kwargs)
-        self.last_cursor = None
 
     @staticmethod
     @endpoint.before_app_first_request
@@ -62,8 +50,9 @@ class Dropbox(ApiSet):
             abort(400, "Malformed JSON in webhook request.")
 
         storage = firestore.client()
+        dbx_client = DropboxClient()
         user_futures = [asyncio.create_task(
-            self.process_user(account, storage)) for account in accounts
+            self.process_user(account, dbx_client, storage)) for account in accounts
         ]
         result = await asyncio.gather(*user_futures)
         return jsonify(result)
@@ -75,8 +64,16 @@ class Dropbox(ApiSet):
         return hmac.compare_digest(
             signature, hmac.new(APP_SECRET, await _request.data, sha256).hexdigest())
 
-    async def process_user(self, dropbox_account, storage):
+    async def process_user(self, dropbox_account, dbx_client: DropboxClient, storage):
+        """Processes user-level modification results from the Dropbox webhook's response.
+
+        :param dropbox_account The Dropbox account ID of the user to update.
+        :param dbx_client A Dropbox Client object.
+        :param storage A storage layer to persist updates to.
+        :returns A list of updated files.
+        """
         check_true(dropbox_account)
+        check_true(dbx_client)
         # encrypted_account = self.encrypt(dropbox_account)
 
         async def update_user_files(_user_path):
@@ -85,7 +82,7 @@ class Dropbox(ApiSet):
 
             # Persist files to Firestore. A FS trigger function will add them to the search index.
             cursor = self.get_cursor(user_data)
-            async for file in await self.visit_files(cursor=cursor):
+            async for file in await dbx_client.visit_files(cursor=cursor):
                 file = await file
                 file_id = file.get("id")
                 if file_id:
@@ -130,70 +127,3 @@ class Dropbox(ApiSet):
             if cursor:
                 return cursor
         return self.last_cursor
-
-    @staticmethod
-    def encrypt(plaintext):
-        return blake2b(salt=Dropbox.SALT).update(plaintext).hexdigest()
-
-    async def visit_files(self, visitor=None, cursor=None, loop=None):
-        visitor = visitor or self.process_file
-        loop = loop or asyncio.get_event_loop()
-
-        # TODO: Create this elsewhere?
-        dbx = dropbox.Dropbox(ACCOUNT_TOKEN)
-
-        while True:
-            # Dropbox doesn't have an async interface yet, so run the dbx calls in a thread pool.
-            list_once = partial(self.list_once, dbx, cursor=cursor)
-            file_obj = await loop.run_in_executor(None, list_once)
-            if file_obj:
-                for entry in file_obj.entries:
-                    yield asyncio.create_task(visitor(entry))
-
-                if file_obj.has_more:
-                    self.last_cursor = cursor = file_obj.cursor
-                    continue
-            break
-
-    def list_once(self, dbx, path=ROOT, limit=LIMIT_PER_CALL, cursor=None):
-        try:
-            if cursor:
-                return dbx.files_list_folder_continue(cursor)
-            else:
-                return dbx.files_list_folder(path=path, limit=limit,
-                                             include_media_info=True, recursive=True)
-        except dropbox.exceptions.ApiError as err:
-            # No retry logic needed because Dropbox itself will retry a few requests.
-            L.warning('Folder listing failed for ', path, ' -- assumed empty: ', err)
-            return None
-
-    async def process_file(self, entry_stone):
-        entry = stone_serializers.json_compat_obj_encode(Metadata_validator, entry_stone)
-        try:
-            metadata = entry_stone.media_info.get_metadata()
-            if isinstance(metadata, PhotoMetadata):
-                return await self.process_photo(entry)
-            elif isinstance(metadata, DeletedMetadata):
-                return await self.process_deleted(entry)
-        except AttributeError:
-            return entry
-
-    async def process_photo(self, entry):
-        entry["type"] = "image"
-
-        # TODO(mb): schedule a tagging job here.
-        return entry
-
-    async def process_deleted(self, entry):
-        entry["deleted"] = True
-        return entry
-
-
-async def main(argv):
-    files = await asyncio.gather(*[file async for file in Dropbox().visit_files()])
-    print(files)
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(asyncio.run(main(sys.argv)))
