@@ -1,8 +1,8 @@
 import asyncio
 import hmac
 from _sha256 import sha256
-from collections import OrderedDict
 
+import attr
 import firebase_admin
 from evanesca.api.api import api, endpoint
 from evanesca.api.api_set import ApiSet
@@ -13,6 +13,7 @@ from flask import Response, request, abort, json, jsonify
 from pydash import pluck
 
 from gearshift.engine.pumps.intake.dropbox.client import DropboxClient
+from gearshift.engine.pumps.intake.dropbox.serializer import DropboxSerializer
 
 LEASE_EXPIRY_MS = 60000
 FIREBASE_PROJECT = "gearshift"
@@ -81,15 +82,16 @@ class Dropbox(ApiSet):
             user_data = _user_path.get()
 
             # Persist files to Firestore. A FS trigger function will add them to the search index.
-            cursor = self.get_cursor(user_data)
-            async for file in await dbx_client.visit_files(cursor=cursor):
+            cursor = await self.get_cursor(user_data)
+            files = []
+            async for file in dbx_client.get_files(cursor=cursor):
                 file = await file
                 file_id = file.get("id")
                 if file_id:
                     file_refs = [user_file_path.document(file_id)]
                 else:
                     match_path = file.get("path_display")
-                    file_refs = user_file_path.where("path_display", "==", match_path).get()
+                    file_refs = user_file_path.where("path", "==", match_path).get()
                     file_refs = pluck(file_refs, "reference")
 
                 batch = storage.batch()
@@ -98,21 +100,23 @@ class Dropbox(ApiSet):
                     for file_ref in file_refs:
                         batch.delete(file_ref)
                 else:
-                    sanitized = OrderedDict((k.replace(".", ""), v) for k, v in file.items())
+                    doc = attr.asdict(DropboxSerializer().parse(file))
                     for file_ref in file_refs:
-                        batch.set(file_ref, sanitized)
+                        batch.set(file_ref, doc)
+                files.append(file)
                 batch.commit()
+            return files
 
         user_path = storage \
             .collection("services") \
             .document("dropbox") \
             .collection("users") \
             .document(dropbox_account)
-        # .document(encrypted_account)
 
-        await update_user_files(user_path)
-        if self.last_cursor:
-            user_path.set({"cursor": self.last_cursor}, merge=True)
+        files = await update_user_files(user_path)
+        if dbx_client.last_cursor:
+            user_path.set({"cursor": dbx_client.last_cursor}, merge=True)
+        return files
 
         # Steps:
         # 1. Grab the last lease and cursor from Firestore

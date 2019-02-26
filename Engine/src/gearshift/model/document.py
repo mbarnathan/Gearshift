@@ -1,7 +1,7 @@
 # coding: utf-8
 from datetime import datetime
 from enum import Enum, unique, IntFlag
-from typing import List, Dict, Iterable
+from typing import List, Dict, Iterable, Any
 
 import attr
 
@@ -27,7 +27,7 @@ class Capability(str, Enum):
     EMBED = "EMBED"
     LINK = "LINK"
     SHARE = "SHARE"
-    ENUMERATE = "ENUMERATE"
+    TRAVERSE = "TRAVERSE"
 
     @staticmethod
     def all(except_: Iterable["Capability"] = None) -> List["Capability"]:
@@ -35,6 +35,8 @@ class Capability(str, Enum):
 
         :param except_ an iterable of Capabilities to exclude.
         """
+        if not isinstance(except_, list) or isinstance(except_, str):
+            except_ = [except_]
         except_ = frozenset(except_ or [])
         return [c for c in Capability if c.name not in except_ and c.value not in except_]
 
@@ -55,8 +57,10 @@ class Document:
     url: str
     description: str
     type: str
+    mime: str
     owner: str
     permissions: Dict[str, Permissions]
+    original: Dict[str, Any]
     metadata: Dict[str, str]
     tags: List[str]
     size: int

@@ -1,9 +1,7 @@
 import mimetypes
-from datetime import datetime
 from typing import Dict, Any
 
 import arrow as arrow
-from orderedmultidict import omdict
 
 from gearshift.model.document import Document, DocRevision, Capability, Permissions
 
@@ -16,10 +14,12 @@ class DropboxSerializer:
             path=df["path_display"],
             url=self.format_url(df["id"]),
             description=None,
-            type=df[".tag"] if df[".tag"] else mimetypes.guess_type(df["name"]),
+            mime=mimetypes.guess_type(df["name"])[0],
+            type=df.get("type") or df.get(".tag") or "file",
             owner=None,  # TODO(mb): Any way to get this in here?
             permissions=self.get_permissions(df.get("sharing_info")),
-            metadata=df,
+            original=df,
+            metadata=df.get("media_info", {}).get("metadata"),
             tags=set(),
             size=df.get("size"),
             hash=df.get("content_hash"),
@@ -38,7 +38,10 @@ class DropboxSerializer:
         ) if rev_id else None
 
     def get_capabilities(self, df):
-        return Capability.all()
+        if df.get(".tag") == "folder":
+            return Capability.all()
+        else:
+            return Capability.all(except_=Capability.TRAVERSE)
 
     def get_permissions(self, df_perms) -> Dict[str, Permissions]:
         permission = Permissions.NONE
