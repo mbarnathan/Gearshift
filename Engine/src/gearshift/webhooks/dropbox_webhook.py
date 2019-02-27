@@ -12,8 +12,8 @@ from firebase_admin import firestore, credentials
 from flask import Response, request, abort, json, jsonify
 from pydash import pluck
 
-from gearshift.engine.pumps.intake.dropbox.client import DropboxClient
-from gearshift.engine.pumps.intake.dropbox.serializer import DropboxSerializer
+from gearshift.engine.intake.dropbox.client import DropboxClient
+from gearshift.engine.intake.dropbox.serializer import DropboxSerializer
 
 LEASE_EXPIRY_MS = 60000
 FIREBASE_PROJECT = "gearshift"

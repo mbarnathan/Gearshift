@@ -92,7 +92,7 @@ class DropboxClient:
 
 # noinspection PyUnusedLocal
 async def main(argv):
-    from gearshift.engine.pumps.intake.dropbox.serializer import DropboxSerializer
+    from gearshift.engine.intake.dropbox.serializer import DropboxSerializer
     serializer = DropboxSerializer()
     files = await asyncio.gather(*[file async for file in DropboxClient().get_files()])
     print(files)
