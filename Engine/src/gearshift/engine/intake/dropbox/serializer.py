@@ -7,20 +7,20 @@ from gearshift.model.document import Document, DocRevision, Capability, Permissi
 
 
 class DropboxSerializer:
-    def parse(self, df: Dict[str, Any]) -> Document:
+    def parse(self, df: Dict[str, Any], account=None) -> Document:
         return Document(
-            objectId=df["id"].replace("id:", "dbx:"),
+            objectID=df["id"].replace("id:", "dbx:"),
             filename=df["name"],
             path=df["path_display"],
             url=self.format_url(df["id"]),
             description=None,
             mime=mimetypes.guess_type(df["name"])[0],
             type=df.get("type") or df.get(".tag") or "file",
-            owner=None,  # TODO(mb): Any way to get this in here?
-            permissions=self.get_permissions(df.get("sharing_info")),
+            owner=account,
+            permissions=self.get_permissions(df.get("sharing_info"), account),
+            source="Dropbox",
             original=df,
             metadata=df.get("media_info", {}).get("metadata"),
-            tags=set(),
             size=df.get("size"),
             hash=df.get("content_hash"),
             revision=self.get_revision(df.get("rev"), df.get("server_modified")),
@@ -28,12 +28,12 @@ class DropboxSerializer:
             capabilities=self.get_capabilities(df)
         )
 
-    def format_url(self, id):
+    def format_url(self, _id):
         return None
 
     def get_revision(self, rev_id, server_modified_time):
         return DocRevision(
-            objectId=rev_id,
+            objectID=rev_id,
             revised=arrow.get(server_modified_time).datetime if server_modified_time else None
         ) if rev_id else None
 
@@ -43,7 +43,7 @@ class DropboxSerializer:
         else:
             return Capability.all(except_=Capability.TRAVERSE)
 
-    def get_permissions(self, df_perms) -> Dict[str, Permissions]:
+    def get_permissions(self, df_perms, account=None) -> Dict[str, Permissions]:
         permission = Permissions.NONE
         if not df_perms:
             return None

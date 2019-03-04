@@ -102,7 +102,7 @@ class Dropbox(ApiSet):
                 else:
                     doc = attr.asdict(DropboxSerializer().parse(file))
                     for file_ref in file_refs:
-                        batch.set(file_ref, doc)
+                        batch.set(file_ref, doc, merge=True)
                 files.append(file)
                 batch.commit()
             return files

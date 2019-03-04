@@ -9,7 +9,7 @@ import attr
 @attr.s(auto_attribs=True)
 class DocRevision:
     """A revision of a document."""
-    objectId: str
+    objectID: str
     revised: datetime
 
 
@@ -42,6 +42,21 @@ class Capability(str, Enum):
 
 
 @attr.s(auto_attribs=True)
+class TaggedWith:
+    """A tagging algorithm and timestamp."""
+    model: str
+    version: float
+    tagged: datetime
+
+
+@attr.s(auto_attribs=True)
+class DocTag:
+    """A tag in a Document."""
+    tag: str
+    model: str
+
+
+@attr.s(auto_attribs=True)
 class Document:
     """Baseline schema for a Document across services.
 
@@ -51,7 +66,7 @@ class Document:
         3. Linkable by URL.
         4. Downloadable for embedding.
     """
-    objectId: str
+    objectID: str
     filename: str
     path: str
     url: str
@@ -60,9 +75,12 @@ class Document:
     mime: str
     owner: str
     permissions: Dict[str, Permissions]
+    source: str
     original: Dict[str, Any]
     metadata: Dict[str, str]
-    tags: List[str]
+    # tags: List[DocTag]
+    # transcript: DocTag
+    # tag_models: List[TaggedWith]
     size: int
     hash: str
     revision: DocRevision
