@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="styles/popup.css" media="all" />
+  </head>
+  <body>
+    <nav class="tabs" role="tablist">
+      <button class="active" role="tab">All</button>
+      <button role="tab">Files</button>
+      <button role="tab">Apps</button>
+      <button role="tab">Docs</button>
+      <button role="tab">People</button>
+      <button role="tab">Chats</button>
+      <button role="tab">Code</button>
+    </nav>
+    <input type="search" name="query" autocomplete="on" />
+    <table class="results" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+          <th colspan="2">Name</th>
+<!--
+          <th>Modified</th>
+          <th>Size</th>
+          <th>Properties</th>
+-->
+          <th colspan="2">Source</th>
+        </tr>
+      </thead>
+      <tbody id="results_files">
+        <tr>
+          <th colspan="1000"><header><h2>Files</h2><hr /></header></th>
+        </tr>
+        <tr tabindex="0">
+          <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
+          <td><span class="filename"><span class="match">Te</span>st File</span> <span class="path">(foo/bar/baz)</span></td>
+          <td><time>Dec. 23, 2013</time></td>
+          <td>400 KB</td>
+          <td></td>
+          <td class="rightcol">Dropbox</td>
+          <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
+        </tr>
+        <tr tabindex="0">
+          <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
+          <td><span class="filename">Test File</span> <span class="path">(foo/bar/baz)</span></td>
+          <td><time>Dec. 23, 2013</time></td>
+          <td>400 KB</td>
+          <td></td>
+          <td class="rightcol">Dropbox</td>
+          <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+<!--    <h1>Hello World!</h1>-->
+    <!-- All of the Node.js APIs are available in this renderer process. -->
+<!--    We are using Node.js <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.-->
+
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+    </script>
+  </body>
+</html>

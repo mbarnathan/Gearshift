@@ -1,0 +1,153 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+img {
+    max-height: 100%;
+    max-width: 100%;
+    outline: none;
+    vertical-align: middle;
+}
+
+hr {
+    width: 100%;
+    height: 1px;
+    border: none;
+    border-top: 1px solid #dcdcdc;
+}
+
+nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(4em, 1fr));
+    background-color: #f3f2f3;
+}
+
+nav > *[role="tab"] {
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    transition: opacity 0.3s, background-color 0.3s;
+    border-bottom: 1px solid #cbcbcb;
+}
+
+nav > button:hover {
+    background-color: #e9e9e9;
+}
+
+nav > button.active {
+    border-bottom: 2px solid #1da7ef;
+    padding-bottom: 13px;
+}
+
+nav > button:active {
+    background-color: #999;
+}
+
+input[type="search"] {
+    background: url("../themes/default/icons/search.png") no-repeat 8px center;
+    background-size: 16px;
+    border: 1px solid #bdbdbd;
+    border-left: none;
+    border-right: none;
+    display: block;
+    width: 100%;
+    padding: 0.5em 35px;
+    outline: none;
+}
+
+nav + input[type="search"] {
+    border-top: none;
+}
+
+.results {
+    width: 100%;
+    box-sizing: border-box;
+    color: #999999;
+    cursor: default;
+}
+
+.results td {
+    margin: 0;
+    padding: 0;
+    height: 1.5em;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.results tr td:first-of-type {
+    padding-left: 5px;
+}
+
+.results tr td:last-of-type {
+    padding-right: 1.5em;
+}
+
+.results .thumbnail {
+    width: 1.15em;
+}
+
+.results .thumbnail:first-of-type {
+    padding-right: 0.2em;
+}
+
+.results .thumbnail:last-of-type {
+    padding-left: 0.5em;
+}
+
+/* TODO(mb): header display? */
+.results thead {
+    display: none;
+}
+
+td.rightcol {
+    text-align: right;
+    white-space: nowrap;
+    width: 1%;
+}
+
+/* Subheaders */
+tbody th {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.results h1, .results h2 {
+    color: #777777;
+    font-size: 1em;
+    font-weight: normal;
+    padding: 0 0.5em;
+}
+
+tbody header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.results tr:focus {
+    background-color: #1a7dc4;
+    outline: none;
+}
+
+.results .filename {
+    color: black;
+}
+
+.results tr:focus, .results tr:focus .filename {
+    color: white;
+}
+
+.match {
+    background-color: yellow;
+    color: black;
+}
