@@ -1,10 +1,21 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, globalShortcut } = require("electron");
+const {app, BrowserWindow, globalShortcut, Menu, MenuItem } = require("electron");
 const activeWin = require("active-win");
+const shortcuts = require("electron-localshortcut");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+function hide() {
+  mainWindow.blur();
+  mainWindow.hide();
+}
+
+function show() {
+  mainWindow.show();
+  mainWindow.focus();
+}
 
 function createWindow () {
   // Create the browser window.
@@ -17,19 +28,23 @@ function createWindow () {
     frame: false
   });
 
+  shortcuts.register(mainWindow, "Esc", hide);
+  shortcuts.register(mainWindow, "CommandOrControl+F4", hide);
+//  shortcuts.register(mainWindow, "Alt+F4", hide);
+  shortcuts.register(mainWindow, "CommandOrControl+W", hide);
+
   // and load the index.html of the app.
   mainWindow.loadFile("index.html");
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 
-  const ret = globalShortcut.register("Super+F3", async () => {
+  const globalShow = globalShortcut.register("Super+F3", async () => {
     let activeWindow = activeWin();
     if (mainWindow.isVisible()) {
-      mainWindow.blur();
-      mainWindow.hide();
+      hide();
     } else {
-      mainWindow.show();
+      show();
     }
     console.log(activeWindow);
   });
@@ -42,8 +57,8 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-    globalShortcut.unregisterAll()
-  })
+    globalShortcut.unregisterAll();
+  });
 }
 
 // This method will be called when Electron has finished

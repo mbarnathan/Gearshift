@@ -22,7 +22,9 @@
   },
   "dependencies": {
     "active-win": "^4.1.0",
+    "electron-localshortcut": "^3.1.0",
     "electron-reloader": "^0.2.0",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "mousetrap": "^1.6.3"
   }
 }

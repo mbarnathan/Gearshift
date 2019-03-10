@@ -15,7 +15,7 @@
       <button role="tab">Chats</button>
       <button role="tab">Code</button>
     </nav>
-    <input type="search" name="query" autocomplete="on" />
+    <input id="search" type="search" name="query" autocomplete="on" />
     <table class="results" cellspacing="0" cellpadding="0">
       <thead>
         <tr>
@@ -37,7 +37,6 @@
           <td><span class="filename"><span class="match">Te</span>st File</span> <span class="path">(foo/bar/baz)</span></td>
           <td><time>Dec. 23, 2013</time></td>
           <td>400 KB</td>
-          <td></td>
           <td class="rightcol">Dropbox</td>
           <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
         </tr>
@@ -46,9 +45,19 @@
           <td><span class="filename">Test File</span> <span class="path">(foo/bar/baz)</span></td>
           <td><time>Dec. 23, 2013</time></td>
           <td>400 KB</td>
-          <td></td>
           <td class="rightcol">Dropbox</td>
           <td class="thumbnail"><img src="themes/default/icons/services/dropbox.svg" /></td>
+        </tr>
+      </tbody>
+      <tbody id="results_actions">
+        <tr>
+          <th colspan="1000"><header><h2>Actions</h2><hr /></header></th>
+        </tr>
+        <tr tabindex="0">
+          <td class="thumbnail"><img src="themes/default/icons/services/github.svg" /></td>
+          <td colspan="3"><span class="filename"><span class="match">Po</span>st to Github</span></td>
+          <td class="rightcol">Github</td>
+          <td class="thumbnail"><img src="themes/default/icons/services/github.svg" /></td>
         </tr>
       </tbody>
     </table>

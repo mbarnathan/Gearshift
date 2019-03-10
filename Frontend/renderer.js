@@ -11,7 +11,6 @@ tabs.on("focus", function () {
   $(this).addClass("active");
 });
 
-/*tabs.on("keydown", function(event) {
-
-})*/
-
+$(window).on("focus", function() {
+  $("#search").focus().select();
+});
