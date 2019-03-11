@@ -140,7 +140,7 @@ tbody header {
     align-items: center;
 }
 
-.results tr:focus {
+.results .active {
     background-color: #1a7dc4;
     outline: none;
 }
@@ -149,7 +149,7 @@ tbody header {
     color: black;
 }
 
-.results tr:focus, .results tr:focus .filename {
+.results .active, .results .active .filename {
     color: white;
 }
 
