@@ -2,7 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const $ = require("jquery");
-const Mousetrap = require("mousetrap")
+const Mousetrap = require("mousetrap");
 
 tabs = $("[role='tab']");
 
@@ -28,6 +28,12 @@ function wrap(elem, backwards) {
   return backwards ? elem.last() : elem.first();
 }
 
+function focusResult(resultRow) {
+  let curFocused = $("#results .active");
+  curFocused.removeClass("active");
+  resultRow.addClass("active");
+}
+
 function navigateResults(direction = "down") {
   const backwards = (direction == "up");
 
@@ -42,9 +48,8 @@ function navigateResults(direction = "down") {
     nextFocused = wrap($("#results td"), backwards).parent();
   }
 
-  curFocused.removeClass("active");
-  nextFocused.addClass("active");
-  return true;
+  focusResult(nextFocused);
+  return false;
 }
 
 function navigateTabs(direction = "right") {
@@ -56,10 +61,10 @@ function navigateTabs(direction = "right") {
   }
   curFocused.removeClass("active");
   nextFocused.addClass("active");
-  return true;
+  return false;
 }
 
 Mousetrap.bind("up", () => navigateResults("up"));
 Mousetrap.bind("down", () => navigateResults("down"));
-Mousetrap.bind("left", () => navigateTabs("left"));
-Mousetrap.bind("right", () => navigateTabs("right"));
+Mousetrap.bind("shift+tab", () => navigateTabs("left"));
+Mousetrap.bind("tab", () => navigateTabs("right"));
