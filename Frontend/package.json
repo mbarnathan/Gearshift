@@ -17,15 +17,17 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^4.0.7",
+    "electron": "^4.1.0",
     "electron-rebuild": "^1.8.4",
     "react": "^16.8.4"
   },
   "dependencies": {
     "active-win": "^4.1.0",
+    "electron-edge-js": "^10.11.1",
     "electron-localshortcut": "^3.1.0",
     "electron-reloader": "^0.2.0",
     "jquery": "^3.3.1",
-    "mousetrap": "^1.6.3"
+    "mousetrap": "^1.6.3",
+    "oledb-electron": "^1.6.0"
   }
 }

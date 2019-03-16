@@ -49,7 +49,10 @@
 
     <script>
       // You can also require other files to run in this process
-      require('./renderer.js')
+      require('./render_scripts/renderer.js');
+      if (process.platform.startsWith("win")) {
+        require('./render_scripts/windows_search.js');
+      }
     </script>
   </body>
 </html>
