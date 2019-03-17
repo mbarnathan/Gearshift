@@ -26,12 +26,13 @@ function createWindow () {
       nodeIntegration: true,
       nodeIntegrationInWorker: true
     },
+    closable: false,
     frame: false
   });
 
   shortcuts.register(mainWindow, "Esc", hide);
   shortcuts.register(mainWindow, "CommandOrControl+F4", hide);
-//  shortcuts.register(mainWindow, "Alt+F4", hide);
+  shortcuts.register(mainWindow, "Alt+F4", () => app.quit());
   shortcuts.register(mainWindow, "CommandOrControl+W", hide);
 
   // and load the index.html of the app.

@@ -9,4 +9,4 @@ function search() {
   searchWorkers.search(query).then(result => console.log(result));
 }
 
-$("#search").on("input", search);
+$("#search").on("search", search);
