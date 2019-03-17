@@ -6,7 +6,7 @@ const { requireTaskPool } = require('electron-remote');
 const searchWorkers = requireTaskPool(require.resolve('./windows_search_worker'));
 function search() {
   let query = $("#search").val();
-  searchWorkers.search(query).then(result => console.log(result));
+  return searchWorkers.search(query).then(result => console.log(result));
 }
 
 $("#search").on("search", search);

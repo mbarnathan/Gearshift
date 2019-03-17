@@ -1,6 +1,7 @@
-const React = require("react");
+'use babel';
+import React from 'react';
 
-class Result extends React.Component {
+export default class Result extends React.Component {
   icon() {
     return "themes/default/icons/services/" + this.props.service.toLowerCase() + ".svg";
   }

@@ -1,10 +1,14 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
+import Result from "../components/result";
+
 const $ = require("jquery");
 const Mousetrap = require("mousetrap");
+const React = require("react");
+const ReactDOM = require("react-dom");
 
-tabs = $("[role='tab']");
+const tabs = $("[role='tab']");
 
 tabs.on("focus", function () {
   let tabs = $(this).siblings("[role='tab']");
@@ -68,3 +72,13 @@ Mousetrap.bind("up", () => navigateResults("up"));
 Mousetrap.bind("down", () => navigateResults("down"));
 Mousetrap.bind("shift+tab", () => navigateTabs("left"));
 Mousetrap.bind("tab", () => navigateTabs("right"));
+
+import {ResultGroup} from "../components/result_group";
+const element =
+    <ResultGroup id="fish" name="fishsticks">
+      <Result filename="one" path="/the/one" modified="1970-01-01 12:00:00 AM" size="1000" service="Fishbox" />
+    </ResultGroup>;
+ReactDOM.render(
+    element,
+    document.getElementById('results')
+);

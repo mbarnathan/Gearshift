@@ -4,7 +4,7 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron -r babel-register ."
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -19,16 +19,21 @@
   "devDependencies": {
     "electron": "^4.1.0",
     "electron-rebuild": "^1.8.4",
-    "react": "^16.8.4"
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
   },
   "dependencies": {
     "active-win": "^4.1.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0",
     "electron-edge-js": "^10.11.1",
     "electron-localshortcut": "^3.1.0",
     "electron-reloader": "^0.2.0",
     "electron-remote": "^1.3.0",
     "jquery": "^3.3.1",
     "mousetrap": "^1.6.3",
-    "oledb-electron": "^1.0.0"
+    "oledb-electron": "^1.0.0",
+    "sqlstring": "^2.3.1"
   }
 }
