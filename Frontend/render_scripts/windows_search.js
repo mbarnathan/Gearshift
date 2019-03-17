@@ -1,8 +1,12 @@
-const oledb = require("oledb-electron");
-const winSearchURI = 'Provider=Search.CollatorDSO;Extended Properties="Application=Windows"';
+const $ = require("jquery");
+const { requireTaskPool } = require('electron-remote');
 
-let connection = oledb.oledbConnection(winSearchURI);
-let query1 = "SELECT System.ItemName FROM SystemIndex WHERE scope ='file:C:/' AND System.ItemName LIKE '%Test%'";
-connection.query(query1).then(result => {
-  console.log(result);
-});
+// TODO: defer until user stops typing for a bit.
+
+const searchWorkers = requireTaskPool(require.resolve('./windows_search_worker'));
+function search() {
+  let query = $("#search").val();
+  searchWorkers.search(query).then(result => console.log(result));
+}
+
+$("#search").on("input", search);
