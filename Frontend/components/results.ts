@@ -1,16 +1,9 @@
 'use babel';
-import React from 'react';
-const Mousetrap = require("mousetrap");
 
-export class Results extends React.Component {
-  constructor(props) {
-    super(props);
-    this.activeRowIdx = -1;
-
-    this.activeRow = this.activeRow.bind(this);
-    this.navigateDown = this.navigateDown.bind(this);
-    this.navigateUp = this.navigateUp.bind(this);
-  }
+export class Results extends ResultGroup<ResultGroup> {
+  id: string;
+  resultGroups: ResultGroup[];
+  activeRow: Result;
 
   render() {
     return (
@@ -24,10 +17,6 @@ export class Results extends React.Component {
           {this.props.children}
         </table>
     );
-  }
-
-  activeRow() {
-    return this.activeRowIdx;
   }
 
   navigateDown() {
