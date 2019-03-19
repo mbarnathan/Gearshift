@@ -1,9 +1,9 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-import {Result} from "../components/result";
-import {Results} from "../components/results";
-import {ResultGroup} from "../components/result_group";
+import {SearchResult} from "../components/SearchResult";
+import {Results} from "../components/Results";
+import {ResultGroup} from "../components/ResultGroup";
 
 const $ = require("jquery");
 const Mousetrap = require("mousetrap");
@@ -55,7 +55,7 @@ function onResultsReady(resultsComponent) {
 ReactDOM.render(
     <Results id="results" ref={onResultsReady}>
       <ResultGroup id="fish" name="fishsticks">
-        <Result filename="one" path="/the/one" modified="1970-01-01 12:00:00 AM" size="1000" service="Fishbox" />
+        <SearchResult filename="one" path="/the/one" modified="1970-01-01 12:00:00 AM" size="1000" service="Fishbox" />
       </ResultGroup>
     </Results>,
     document.getElementById("result_container")

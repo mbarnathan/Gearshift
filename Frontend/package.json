@@ -18,14 +18,11 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^4.1.0",
-    "electron-rebuild": "^1.8.4",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "electron-rebuild": "^1.8.4"
   },
   "dependencies": {
     "active-win": "^4.1.0",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "electron-edge-js": "^10.11.1",
     "electron-localshortcut": "^3.1.0",
