@@ -7,8 +7,6 @@ import {ResultGroup} from "../components/ResultGroup";
 
 const $ = require("jquery");
 const Mousetrap = require("mousetrap");
-const React = require("react");
-const ReactDOM = require("react-dom");
 
 const tabs = $("[role='tab']");
 
