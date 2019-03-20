@@ -1,5 +1,5 @@
-import {Focusable} from "./Focusable";
-import {Renders} from "./Renders";
+import {Focusable} from "../capabilities/Focusable";
+import {Renders} from "../capabilities/Renders";
 import {render as _render, TemplateResult} from "lit-html";
 
 export abstract class Result implements Focusable, Renders {
