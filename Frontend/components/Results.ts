@@ -1,6 +1,6 @@
 import {ResultGroup} from "./ResultGroup";
 import {Result} from "./Result";
-import {html, TemplateResult} from "lighterhtml";
+import {html} from "lighterhtml";
 
 export class Results extends ResultGroup<Result> {
   private _id?:string;
@@ -29,9 +29,9 @@ export class Results extends ResultGroup<Result> {
     return true;
   }
 
-  template(): TemplateResult {
+  template(): HTMLElement {
     return html`
-<table id=${this.id} class="results" cellspacing="0" cellpadding="0">
+<table id="${this.id}" class="results" cellspacing="0" cellpadding="0">
   <thead>
     <tr>
       <th colspan="2">Name</th>

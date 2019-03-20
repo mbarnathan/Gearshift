@@ -1,11 +1,11 @@
 import * as _ from "lodash";
 import {Result} from "./Result";
-import {html, TemplateResult} from "lighterhtml";
-import {LinkedMap} from "linked-map";
+import {html} from "lighterhtml";
+const LinkedMap = require("linked-map");
 
 export class ResultGroup<Child extends Result> extends Result {
   public name: string;
-  protected children: LinkedMap<string, Child>;
+  protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
 
   public get id():string {
@@ -73,9 +73,9 @@ export class ResultGroup<Child extends Result> extends Result {
 
   // TODO(mb): Actions can go here too.
 
-  public template(): TemplateResult {
+  public template(): HTMLElement {
     return html`
-        <tbody id=${this.id}>
+        <tbody id="${this.id}">
           <tr>
             <th colspan="1000">
               <header><h2>${this.name}</h2>

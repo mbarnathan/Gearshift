@@ -1,5 +1,3 @@
-import {TemplateResult} from "lighterhtml";
-
 export interface Renders {
   bound_element: HTMLElement | null;
 

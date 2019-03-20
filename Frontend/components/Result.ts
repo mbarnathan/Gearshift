@@ -1,6 +1,6 @@
 import {Focusable} from "../capabilities/Focusable";
 import {Renders} from "../capabilities/Renders";
-import {render as _render, TemplateResult} from "lighterhtml";
+import {render as _render} from "lighterhtml";
 
 export abstract class Result implements Focusable, Renders {
   id: string;
@@ -19,7 +19,7 @@ export abstract class Result implements Focusable, Renders {
     this._focused = true;
   }
 
-  abstract template(): string;
+  abstract template(): HTMLElement;
   abstract navigateDown(): boolean;
   abstract navigateUp(): boolean;
 
@@ -27,7 +27,7 @@ export abstract class Result implements Focusable, Renders {
     if (!this.bound_element) {
       return;
     }
-    _render(this.template(), this.bound_element);
+    _render(this.bound_element, () => this.template());
   }
 
   public bind(element: HTMLElement|null): void {

@@ -1,5 +1,5 @@
 import {Result} from "./Result";
-import {html, TemplateResult} from "lighterhtml";
+import {html} from "lighterhtml";
 
 export class SearchResult extends Result {
   filename: string;
@@ -21,15 +21,15 @@ export class SearchResult extends Result {
     return true;
   }
 
-  template(): TemplateResult {
+  template(): HTMLElement {
     return html`
-        <tr class=${this.focused() ? "active" : "inactive"}>
-          <td class="thumbnail"><img src=${this.icon()} /></td>
+        <tr class="${this.focused() ? "active" : "inactive"}">
+          <td class="thumbnail"><img src="${this.icon()}" /></td>
           <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified}</time></td>
           <td>${this.size}</td>
           <td class="rightcol">${this.service}</td>
-          <td class="thumbnail"><img src=${this.icon()} /></td>
+          <td class="thumbnail"><img src="${this.icon()}" /></td>
         </tr>`;
   }
 }
