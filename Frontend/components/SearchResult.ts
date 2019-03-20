@@ -1,5 +1,5 @@
 import {Result} from "./Result";
-import {html} from "lighterhtml";
+import {hyper} from "hyperhtml";
 
 export class SearchResult extends Result {
   filename: string;
@@ -22,7 +22,7 @@ export class SearchResult extends Result {
   }
 
   template(): HTMLElement {
-    return html`
+    return hyper`
         <tr class="${this.focused() ? "active" : "inactive"}">
           <td class="thumbnail"><img src="${this.icon()}" /></td>
           <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>

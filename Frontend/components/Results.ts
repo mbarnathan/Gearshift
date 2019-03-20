@@ -1,6 +1,6 @@
 import {ResultGroup} from "./ResultGroup";
 import {Result} from "./Result";
-import {html} from "lighterhtml";
+import {hyper} from "hyperhtml";
 
 export class Results extends ResultGroup<Result> {
   private _id?:string;
@@ -30,7 +30,7 @@ export class Results extends ResultGroup<Result> {
   }
 
   template(): HTMLElement {
-    return html`
+    return hyper`
 <table id="${this.id}" class="results" cellspacing="0" cellpadding="0">
   <thead>
     <tr>
@@ -38,7 +38,6 @@ export class Results extends ResultGroup<Result> {
       <th colspan="2">Source</th>
     </tr>
   </thead>
-  ${this.children.values()}
 </table>`;
   }
 /*

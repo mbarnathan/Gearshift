@@ -1,6 +1,5 @@
 import {Focusable} from "../capabilities/Focusable";
 import {Renders} from "../capabilities/Renders";
-import {render as _render} from "lighterhtml";
 
 export abstract class Result implements Focusable, Renders {
   id: string;
@@ -27,7 +26,7 @@ export abstract class Result implements Focusable, Renders {
     if (!this.bound_element) {
       return;
     }
-    _render(this.bound_element, () => this.template());
+    this.bound_element.appendChild(this.template());
   }
 
   public bind(element: HTMLElement|null): void {
