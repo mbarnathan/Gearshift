@@ -1,20 +1,24 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, globalShortcut, Menu, MenuItem } = require("electron");
+import {app, BrowserWindow, globalShortcut } from "electron";
 const activeWin = require("active-win");
 const shortcuts = require("electron-localshortcut");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+let mainWindow: BrowserWindow|null;
 
 function hide() {
-  mainWindow.blur();
-  mainWindow.hide();
+  if (mainWindow) {
+    mainWindow.blur();
+    mainWindow.hide();
+  }
 }
 
 function show() {
-  mainWindow.show();
-  mainWindow.focus();
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.focus();
+  }
 }
 
 function createWindow () {
@@ -43,7 +47,7 @@ function createWindow () {
 
   const globalShow = globalShortcut.register("Super+F3", async () => {
     let activeWindow = activeWin();
-    if (mainWindow.isVisible()) {
+    if (mainWindow && mainWindow.isVisible()) {
       hide();
     } else {
       show();

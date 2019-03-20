@@ -1,23 +1,29 @@
 'use babel';
-import _ = require("lodash");
-import LinkedMap = require("linked-map");
+import * as _ from "lodash";
 import {Result} from "./Result";
 import {html, TemplateResult} from "lit-html";
+import {LinkedMap} from "linked-map";
 
 export class ResultGroup<Child extends Result> extends Result {
   public name: string;
   protected children: LinkedMap<string, Child>;
-  protected focusedChild?: Child = null;
+  protected focusedChild: Child | null = null;
 
   public get id():string {
     return "results_" + _.snakeCase(this.name);
   }
 
-  public focusChild(child?: Child):void {
+  public add(...children: Child[]) {
+    for (let child of children) {
+      this.children.push(child.id, child);
+    }
+  }
+
+  public focusChild(child: Child|null):void {
     this.focusChildId((child) ? child.id : null);
   }
 
-  public focusChildId(child_id?: string):void {
+  public focusChildId(child_id: string|null):void {
     if (this.focusedChild) {
       this.focusedChild.blur();
       this.focusedChild = null;

@@ -8,7 +8,7 @@ export class Results extends ResultGroup<Result> {
   private _id?:string;
 
   public get id():string {
-    return this._id;
+    return this._id || "results";
   }
 
   public set id(new_id:string) {

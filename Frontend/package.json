@@ -1,10 +1,12 @@
 {
-  "name": "electron-quick-start",
+  "name": "gearshift",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
-  "main": "main.js",
+  "description": "The Universal Search App",
   "scripts": {
-    "start": "electron -r babel-register ."
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -14,11 +16,16 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Savvy Studios",
+  "license": "Proprietary",
   "devDependencies": {
+    "@types/jquery": "^3.3.29",
+    "@types/lodash": "^4.14.123",
+    "@types/mousetrap": "^1.6.1",
     "electron": "^4.1.0",
-    "electron-rebuild": "^1.8.4"
+    "electron-rebuild": "^1.8.4",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.4000"
   },
   "dependencies": {
     "active-win": "^4.1.0",

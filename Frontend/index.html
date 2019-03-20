@@ -22,7 +22,7 @@
     <script>
       // You can also require other files to run in this process
       require('babel-register');
-      require('./render_scripts/renderer.js');
+      require('./render_scripts/renderer.ts');
       if (process.platform.startsWith("win")) {
         require('./render_scripts/windows_search.js');
       }

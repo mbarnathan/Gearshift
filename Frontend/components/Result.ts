@@ -4,8 +4,8 @@ import {render as _render, TemplateResult} from "lit-html";
 
 export abstract class Result implements Focusable, Renders {
   id: string;
-  bound_element: HTMLElement = null;
-  protected _focused;
+  bound_element: HTMLElement|null = null;
+  protected _focused: boolean;
 
   public focused(): boolean {
     return this._focused;
@@ -30,8 +30,7 @@ export abstract class Result implements Focusable, Renders {
     _render(this.template(), this.bound_element);
   }
 
-
-  bind(element: HTMLElement): void {
+  public bind(element: HTMLElement|null): void {
     this.bound_element = element;
   }
 }

@@ -4,9 +4,7 @@
 import {SearchResult} from "../components/SearchResult";
 import {Results} from "../components/Results";
 import {ResultGroup} from "../components/ResultGroup";
-
-const $ = require("jquery");
-const Mousetrap = require("mousetrap");
+import * as Mousetrap from 'mousetrap';
 
 const tabs = $("[role='tab']");
 
@@ -24,11 +22,11 @@ $(window).on("keydown", function() {
   $("#search").focus();
 });
 
-function go(elem, selector, backwards) {
+function go(elem: any, selector: any, backwards: boolean) {
   return backwards ? elem.prev(selector) : elem.next(selector);
 }
 
-function wrap(elem, backwards) {
+function wrap(elem: any, backwards: boolean) {
   return backwards ? elem.last() : elem.first();
 }
 
@@ -45,7 +43,23 @@ function navigateTabs(direction = "right") {
   return false;
 }
 
-function onResultsReady(resultsComponent) {
+let results = new Results();
+let resultgroup = new ResultGroup();
+let result = new SearchResult();
+result.filename = "one";
+result.path = "/the/one";
+result.modified = new Date();
+result.size = 1000;
+result.service = "Fishbox";
+
+resultgroup.name = "fishsticks";
+resultgroup.add(result);
+results.add(resultgroup);
+
+results.bind(document.getElementById("result_container"));
+results.render();
+
+/*function onResultsReady(resultsComponent) {
   window.results = resultsComponent;
   resultsComponent.bindArrowKeys();
 }
@@ -57,7 +71,7 @@ ReactDOM.render(
       </ResultGroup>
     </Results>,
     document.getElementById("result_container")
-);
+);*/
 
 Mousetrap.bind("shift+tab", () => navigateTabs("left"));
 Mousetrap.bind("tab", () => navigateTabs("right"));
