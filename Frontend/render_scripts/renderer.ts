@@ -4,7 +4,8 @@
 import {SearchResult} from "../components/SearchResult";
 import {Results} from "../components/Results";
 import {ResultGroup} from "../components/ResultGroup";
-import * as Mousetrap from 'mousetrap';
+import * as Mousetrap from "mousetrap";
+import * as $ from "jquery";
 
 const tabs = $("[role='tab']");
 
@@ -29,7 +30,6 @@ function go(elem: any, selector: any, backwards: boolean) {
 function wrap(elem: any, backwards: boolean) {
   return backwards ? elem.last() : elem.first();
 }
-
 
 function navigateTabs(direction = "right") {
   const backwards = (direction == "left");
@@ -58,20 +58,6 @@ results.add(resultgroup);
 
 results.bind(document.getElementById("result_container"));
 results.render();
-
-/*function onResultsReady(resultsComponent) {
-  window.results = resultsComponent;
-  resultsComponent.bindArrowKeys();
-}
-
-ReactDOM.render(
-    <Results id="results" ref={onResultsReady}>
-      <ResultGroup id="fish" name="fishsticks">
-        <SearchResult filename="one" path="/the/one" modified="1970-01-01 12:00:00 AM" size="1000" service="Fishbox" />
-      </ResultGroup>
-    </Results>,
-    document.getElementById("result_container")
-);*/
 
 Mousetrap.bind("shift+tab", () => navigateTabs("left"));
 Mousetrap.bind("tab", () => navigateTabs("right"));

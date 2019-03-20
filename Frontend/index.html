@@ -17,14 +17,14 @@
     </nav>
     <input id="search" role="searchbox" class="mousetrap" type="search" name="query" incremental="on" autocomplete="off" />
     <section id="result_container">
-      <!-- React will bind results to this section. -->
+      <!-- Results will bind to this section. -->
     </section>
     <script>
       // You can also require other files to run in this process
-      require('babel-register');
-      require('./render_scripts/renderer.ts');
+//      require('babel-register');
+      require('./dist/render_scripts/renderer.js');
       if (process.platform.startsWith("win")) {
-        require('./render_scripts/windows_search.js');
+        require('./dist/render_scripts/windows_search.js');
       }
     </script>
   </body>

@@ -1,5 +1,7 @@
 // Modules to control application life and create native browser window
-import {app, BrowserWindow, globalShortcut } from "electron";
+import {app, BrowserWindow, globalShortcut} from "electron";
+import * as path from "path";
+
 const activeWin = require("active-win");
 const shortcuts = require("electron-localshortcut");
 
@@ -40,7 +42,7 @@ function createWindow () {
   shortcuts.register(mainWindow, "CommandOrControl+W", hide);
 
   // and load the index.html of the app.
-  mainWindow.loadFile("index.html");
+  mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

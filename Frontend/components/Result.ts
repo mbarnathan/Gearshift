@@ -1,6 +1,6 @@
 import {Focusable} from "../capabilities/Focusable";
 import {Renders} from "../capabilities/Renders";
-import {render as _render, TemplateResult} from "lit-html";
+import {render as _render, TemplateResult} from "lighterhtml";
 
 export abstract class Result implements Focusable, Renders {
   id: string;
@@ -19,7 +19,7 @@ export abstract class Result implements Focusable, Renders {
     this._focused = true;
   }
 
-  abstract template(): TemplateResult;
+  abstract template(): string;
   abstract navigateDown(): boolean;
   abstract navigateUp(): boolean;
 

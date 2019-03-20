@@ -1,7 +1,5 @@
-const $ = require("jquery");
-const { requireTaskPool } = require('electron-remote');
-
-// TODO: defer until user stops typing for a bit.
+import * as $ from "jquery";
+import { requireTaskPool } from "electron-remote";
 
 const searchWorkers = requireTaskPool(require.resolve('./windows_search_worker'));
 function search() {

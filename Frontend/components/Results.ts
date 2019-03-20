@@ -1,8 +1,6 @@
-'use babel';
-
 import {ResultGroup} from "./ResultGroup";
 import {Result} from "./Result";
-import {html, TemplateResult} from "lit-html";
+import {html, TemplateResult} from "lighterhtml";
 
 export class Results extends ResultGroup<Result> {
   private _id?:string;

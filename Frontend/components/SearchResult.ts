@@ -1,6 +1,5 @@
-'use babel';
 import {Result} from "./Result";
-import {html, TemplateResult} from "lit-html";
+import {html, TemplateResult} from "lighterhtml";
 
 export class SearchResult extends Result {
   filename: string;

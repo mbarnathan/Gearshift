@@ -1,9 +1,9 @@
-import {TemplateResult} from "lit-html";
+import {TemplateResult} from "lighterhtml";
 
 export interface Renders {
   bound_element: HTMLElement | null;
 
-  template(): TemplateResult;
+  template(): any;
   bind(element: HTMLElement): void;
   render(): void;
 }

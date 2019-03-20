@@ -1,7 +1,6 @@
-'use babel';
 import * as _ from "lodash";
 import {Result} from "./Result";
-import {html, TemplateResult} from "lit-html";
+import {html, TemplateResult} from "lighterhtml";
 import {LinkedMap} from "linked-map";
 
 export class ResultGroup<Child extends Result> extends Result {
