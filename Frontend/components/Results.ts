@@ -2,6 +2,7 @@
 
 import {ResultGroup} from "./ResultGroup";
 import {Result} from "./Result";
+import {html, TemplateResult} from "lit-html";
 
 export class Results extends ResultGroup<Result> {
   private _id?:string;
@@ -30,19 +31,19 @@ export class Results extends ResultGroup<Result> {
     return true;
   }
 
-  render() {
+  template(): TemplateResult {
     return html`
-        <table id={this.props.id} className="results" cellSpacing="0" cellPadding="0">
-    <thead>
-        <tr>
-            <th colSpan="2">Name</th>
-        <th colSpan="2">Source</th>
-        </tr>
-        </thead>
-    {this.props.children}
-    </table>`;
+<table id=${this.id} class="results" cellspacing="0" cellpadding="0">
+  <thead>
+    <tr>
+      <th colspan="2">Name</th>
+      <th colspan="2">Source</th>
+    </tr>
+  </thead>
+  ${this.children.values()}
+</table>`;
   }
-
+/*
   bindArrowKeys() {
     Mousetrap.bind("up", this.navigateUp);
     Mousetrap.bind("down", this.navigateDown);
@@ -55,5 +56,5 @@ export class Results extends ResultGroup<Result> {
       Mousetrap.unbind("down");
       this.bound = false;
     }
-  }
+  }*/
 }

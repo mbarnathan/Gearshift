@@ -1,7 +1,8 @@
 'use babel';
-import _ = require('lodash');
-import LinkedMap = require('linked-map');
+import _ = require("lodash");
+import LinkedMap = require("linked-map");
 import {Result} from "./Result";
+import {html, TemplateResult} from "lit-html";
 
 export class ResultGroup<Child extends Result> extends Result {
   public name: string;
@@ -67,17 +68,17 @@ export class ResultGroup<Child extends Result> extends Result {
 
   // TODO(mb): Actions can go here too.
 
-  public render() {
+  public template(): TemplateResult {
     return html`
-        <tbody id={this.props.id} key={this.props.id}>
+        <tbody id=${this.id}>
           <tr>
             <th colspan="1000">
-              <header><h2>{this.props.name}</h2>
+              <header><h2>${this.name}</h2>
                 <hr />
               </header>
             </th>
           </tr>
-          {this.props.children}
+          ${this.children.values()}
         </tbody>`;
   }
 }

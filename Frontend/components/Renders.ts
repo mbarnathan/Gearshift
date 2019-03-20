@@ -1,3 +1,9 @@
+import {TemplateResult} from "lit-html";
+
 export interface Renders {
-  render():string;
+  bound_element: HTMLElement;
+
+  template(): TemplateResult;
+  bind(element: HTMLElement): void;
+  render(): void;
 }
