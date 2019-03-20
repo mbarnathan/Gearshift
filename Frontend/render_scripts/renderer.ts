@@ -57,7 +57,6 @@ resultgroup.add(result);
 results.add(resultgroup);
 
 results.bind(document.getElementById("result_container"));
-results.render();
 
 Mousetrap.bind("shift+tab", () => navigateTabs("left"));
 Mousetrap.bind("tab", () => navigateTabs("right"));

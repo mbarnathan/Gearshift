@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import {Result} from "./Result";
-import {hyper} from "hyperhtml";
 const LinkedMap = require("linked-map");
 
 export class ResultGroup<Child extends Result> extends Result {
@@ -73,8 +72,8 @@ export class ResultGroup<Child extends Result> extends Result {
 
   // TODO(mb): Actions can go here too.
 
-  public template(): HTMLElement {
-    return hyper`
+  render() {
+    return this.html`
         <tbody id="${this.id}">
           <tr>
             <th colspan="1000">

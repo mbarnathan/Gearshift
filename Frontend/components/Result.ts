@@ -1,9 +1,8 @@
 import {Focusable} from "../capabilities/Focusable";
-import {Renders} from "../capabilities/Renders";
+import hyper from "hyperhtml";
 
-export abstract class Result implements Focusable, Renders {
+export abstract class Result extends hyper.Component implements Focusable {
   id: string;
-  bound_element: HTMLElement|null = null;
   protected _focused: boolean;
 
   public focused(): boolean {
@@ -18,18 +17,13 @@ export abstract class Result implements Focusable, Renders {
     this._focused = true;
   }
 
-  abstract template(): HTMLElement;
+  public bind(element: HTMLElement|null) {
+    if (element != null) {
+      hyper(element)`${this}`;
+    }
+  }
+
+  abstract render(): HTMLElement;
   abstract navigateDown(): boolean;
   abstract navigateUp(): boolean;
-
-  public render(): void {
-    if (!this.bound_element) {
-      return;
-    }
-    this.bound_element.appendChild(this.template());
-  }
-
-  public bind(element: HTMLElement|null): void {
-    this.bound_element = element;
-  }
 }
