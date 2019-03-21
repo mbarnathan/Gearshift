@@ -1,11 +1,10 @@
 import {Result} from "./Result";
 
 export class SearchResult extends Result {
-  filename: string;
-  path: string;
-  modified: Date;
-  size: number;
-  service: string;
+  constructor(readonly filename: string, readonly service: string,
+              readonly path:string, readonly modified: Date, readonly size: number) {
+    super();
+  }
 
   protected icon(): string {
     return "themes/default/icons/services/" + this.service.toLowerCase() + ".svg";

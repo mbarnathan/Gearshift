@@ -4,6 +4,7 @@
 import {SearchResult} from "../components/SearchResult";
 import {Results} from "../components/Results";
 import {ResultGroup} from "../components/ResultGroup";
+import {Builder} from "../libs/builder-pattern/src";
 import * as Mousetrap from "mousetrap";
 import * as $ from "jquery";
 
@@ -45,12 +46,13 @@ function navigateTabs(direction = "right") {
 
 let results = new Results();
 let resultgroup = new ResultGroup();
-let result = new SearchResult();
-result.filename = "one";
-result.path = "/the/one";
-result.modified = new Date();
-result.size = 1000;
-result.service = "Fishbox";
+let result = Builder(SearchResult)
+    .path("/the/one")
+    .filename("one")
+    .modified(new Date())
+    .size(1000)
+    .service("Fishbox")
+    .build();
 
 resultgroup.name = "fishsticks";
 resultgroup.add(result);
