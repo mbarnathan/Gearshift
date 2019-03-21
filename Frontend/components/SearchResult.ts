@@ -25,7 +25,7 @@ export class SearchResult extends Result {
         <tr class="${this.focused() ? "active" : "inactive"}">
           <td class="thumbnail"><img src="${this.icon()}" /></td>
           <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>
-          <td><time>${this.modified}</time></td>
+          <td><time>${this.modified.toLocaleString()}</time></td>
           <td>${this.size}</td>
           <td class="rightcol">${this.service}</td>
           <td class="thumbnail"><img src="${this.icon()}" /></td>

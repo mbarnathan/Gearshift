@@ -29,7 +29,7 @@ export class Results extends ResultGroup<Result> {
     return true;
   }
 
-  template(): HTMLElement {
+  render() {
     return hyper`
 <table id="${this.id}" class="results" cellspacing="0" cellpadding="0">
   <thead>
@@ -38,8 +38,10 @@ export class Results extends ResultGroup<Result> {
       <th colspan="2">Source</th>
     </tr>
   </thead>
+  ${this.children.values()}
 </table>`;
   }
+
 /*
   bindArrowKeys() {
     Mousetrap.bind("up", this.navigateUp);
