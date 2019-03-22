@@ -45,7 +45,7 @@ function navigateTabs(direction = "right") {
 }
 
 let results = new Results();
-let resultgroup = new ResultGroup();
+let resultgroup1 = new ResultGroup();
 let result = Builder(SearchResult)
     .path("/the/one")
     .filename("one")
@@ -54,11 +54,30 @@ let result = Builder(SearchResult)
     .service("Fishbox")
     .build();
 
-resultgroup.name = "fishsticks";
-resultgroup.add(result);
-results.add(resultgroup);
+let result2 = Builder(SearchResult, result)
+    .path("/the/two")
+    .filename("two")
+    .modified(new Date())
+    .build();
+
+let result3 = Builder(SearchResult, result)
+    .path("/the/three")
+    .filename("three")
+    .modified(new Date())
+    .build();
+
+resultgroup1.name = "fishsticks";
+resultgroup1.add(result, result2);
+
+let resultgroup2 = new ResultGroup();
+resultgroup2.name = "fishy";
+resultgroup2.add(result3);
+
+results.add(resultgroup1);
+results.add(resultgroup2);
 
 results.bind(document.getElementById("result_container"));
+results.bindArrowKeys();
 
 Mousetrap.bind("shift+tab", () => navigateTabs("left"));
 Mousetrap.bind("tab", () => navigateTabs("right"));

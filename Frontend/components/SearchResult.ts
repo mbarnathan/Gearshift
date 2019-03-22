@@ -6,22 +6,25 @@ export class SearchResult extends Result {
     super();
   }
 
+  public get id():string {
+    return this.path + "_" + this.service;
+  }
+
   protected icon(): string {
     return "themes/default/icons/services/" + this.service.toLowerCase() + ".svg";
   }
 
   // These are single results and don't contain children to navigate over.
-  navigateDown():boolean {
-    return true;
+  navigate(wrap: Function, proceed: Function): boolean {
+    return false;
   }
 
-  navigateUp():boolean {
-    return true;
-  }
+  navigateDown():boolean { return this.navigate(() => null, () => null); }
+  navigateUp():boolean { return this.navigate(() => null, () => null); }
 
   render() {
     return this.html`
-        <tr class="${this.focused() ? "active" : "inactive"}">
+        <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" /></td>
           <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified.toLocaleString()}</time></td>

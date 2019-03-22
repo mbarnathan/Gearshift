@@ -13,18 +13,10 @@ export class Results extends ResultGroup<Result> {
     this._id = new_id;
   }
 
-  navigateUp(): boolean {
-    if (!super.navigateUp()) {
-      // Hit top or empty selection; wrap to bottom.
-      this.focusChildId(this.children.tailKey());
-    }
-    return true;
-  }
-
-  navigateDown(): boolean {
-    if (!super.navigateDown()) {
-      // Hit bottom or empty selection; wrap to top.
-      this.focusChildId(this.children.headKey());
+  public navigate(wrap: Function, proceed: Function): boolean {
+    if (!super.navigate(wrap, proceed)) {
+      // Hit bottom or empty selection and focus is now cleared; nav again to wrap to top.
+      return this.navigate(wrap, proceed);
     }
     return true;
   }
@@ -42,18 +34,8 @@ export class Results extends ResultGroup<Result> {
 </table>`;
   }
 
-/*
   bindArrowKeys() {
-    Mousetrap.bind("up", this.navigateUp);
-    Mousetrap.bind("down", this.navigateDown);
-    this.bound = true;
+    Mousetrap.bind("up", () => this.navigateUp());
+    Mousetrap.bind("down", () => this.navigateDown());
   }
-
-  componentWillUnmount() {
-    if (this.bound) {
-      Mousetrap.unbind("up");
-      Mousetrap.unbind("down");
-      this.bound = false;
-    }
-  }*/
 }

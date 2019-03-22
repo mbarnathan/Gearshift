@@ -38,35 +38,48 @@ export class ResultGroup<Child extends Result> extends Result {
     this.focusedChild.focus();
   }
 
+  // Nested ResultGroups don't wrap their focus,
+  // so that behavior is omitted here and implemented in the top level Results.
+
   navigateUp(): boolean {
-    if (this.focusedChild) {
-      // Navigate up at the deepest level of nesting.
-      if (this.focusedChild.navigateUp && this.focusedChild.navigateUp()) {
-        return true;
-      }
-
-      // Child is not navigable / at top. Move to the previous group and repeat.
-      this.focusChildId(this.children.previousKey(this.focusedChild.id));
-      return this.navigateUp();
-    }
-
-    // We ran off the sublist. Allow the parent to take over.
-    return false;
+    return this.navigate(
+        (children) => children.tailKey(),
+        (children, id) => children.previousKey(id));
   }
 
   navigateDown(): boolean {
-    if (this.focusedChild) {
-      // Navigate down at the deepest level of nesting.
-      if (this.focusedChild.navigateDown && this.focusedChild.navigateDown()) {
-        return true;
-      }
+    return this.navigate(
+        (children) => children.headKey(),
+        (children, id) => children.nextKey(id));
+  }
 
-      // Child is not navigable / at bottom. Move to the next group and repeat.
-      this.focusChildId(this.children.nextKey(this.focusedChild.id));
-      return this.navigateDown();
+  navigate(wrap: Function, proceed: Function): boolean {
+    if (this.children.size() == 0) {
+      // It's empty, stop here.
+      return true;
     }
 
-    // We ran off the sublist. Allow the parent to take over.
+    if (!this.focusedChild) {
+      // Return the first (last on up) element of every subgroup.
+      this.focusChildId(wrap(this.children));
+      this.focusedChild!.navigate(wrap, proceed);
+      return true;
+    }
+
+    // If there's still further to proceed in a sublevel, do that.
+    if (this.focusedChild.navigate(wrap, proceed)) {
+      return true;
+    }
+
+    // Otherwise, we're at the end of a sublist, and need to move once at this level.
+    let nextKeyToFocus = proceed(this.children, this.focusedChild.id);
+    this.focusChildId(nextKeyToFocus);
+
+    // Return false if we've run off the list at this level, otherwise true.
+    if (this.focusedChild) {
+      this.focusedChild.navigate(wrap, proceed);
+      return true;
+    }
     return false;
   }
 

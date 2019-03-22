@@ -3,18 +3,21 @@ import hyper from "hyperhtml";
 
 export abstract class Result extends hyper.Component implements Focusable {
   id: string;
-  protected _focused: boolean;
+
+  get defaultState() {
+    return {focused: false};
+  }
 
   public focused(): boolean {
-    return this._focused;
+    return this.state["focused"];
   }
 
   public blur(): void {
-    this._focused = false;
+    this.setState({focused: false});
   }
 
   public focus(): void {
-    this._focused = true;
+    this.setState({focused: true});
   }
 
   public bind(element: HTMLElement|null) {
@@ -26,4 +29,5 @@ export abstract class Result extends hyper.Component implements Focusable {
   abstract render(): HTMLElement;
   abstract navigateDown(): boolean;
   abstract navigateUp(): boolean;
+  abstract navigate(wrap: Function, proceed: Function): boolean;
 }

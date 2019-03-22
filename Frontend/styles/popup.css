@@ -139,7 +139,7 @@ tbody header {
     align-items: center;
 }
 
-.results .active {
+.results .focused {
     background-color: #1a7dc4;
     outline: none;
 }
@@ -148,7 +148,7 @@ tbody header {
     color: black;
 }
 
-.results .active, .results .active .filename {
+.results .focused, .results .focused .filename {
     color: white;
 }
 
