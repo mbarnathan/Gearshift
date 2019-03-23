@@ -1,8 +1,8 @@
 import {ResultGroup} from "./ResultGroup";
-import {Result} from "./Result";
+import {BaseResult} from "./BaseResult";
 import {hyper} from "hyperhtml";
 
-export class Results extends ResultGroup<Result> {
+export class ResultBox extends ResultGroup<BaseResult> {
   private _id?:string;
 
   public get id():string {

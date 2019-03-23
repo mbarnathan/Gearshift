@@ -1,7 +1,9 @@
-import {Focusable} from "../capabilities/Focusable";
+import {Actionable} from "../../capabilities/Actionable";
+import {Focusable} from "../../capabilities/Focusable";
 import hyper from "hyperhtml";
+import {Action} from "../Action";
 
-export abstract class Result extends hyper.Component implements Focusable {
+export abstract class BaseResult extends hyper.Component implements Focusable, Actionable {
   id: string;
 
   get defaultState() {
@@ -30,4 +32,5 @@ export abstract class Result extends hyper.Component implements Focusable {
   abstract navigateDown(): boolean;
   abstract navigateUp(): boolean;
   abstract navigate(wrap: Function, proceed: Function): boolean;
+  abstract actions(context?: Context): Action[];
 }

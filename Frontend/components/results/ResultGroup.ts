@@ -1,8 +1,9 @@
 import * as _ from "lodash";
-import {Result} from "./Result";
+import {BaseResult} from "./BaseResult";
+import {Action} from "./Action";
 const LinkedMap = require("linked-map");
 
-export class ResultGroup<Child extends Result> extends Result {
+export class ResultGroup<Child extends BaseResult> extends BaseResult {
   public name: string;
   protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
@@ -39,7 +40,7 @@ export class ResultGroup<Child extends Result> extends Result {
   }
 
   // Nested ResultGroups don't wrap their focus,
-  // so that behavior is omitted here and implemented in the top level Results.
+  // so that behavior is omitted here and implemented in the top level ResultBox.
 
   navigateUp(): boolean {
     return this.navigate(
@@ -83,7 +84,9 @@ export class ResultGroup<Child extends Result> extends Result {
     return false;
   }
 
-  // TODO(mb): Actions can go here too.
+  actions(context?: Context): Action[] {
+    return [];
+  }
 
   render() {
     return this.html`

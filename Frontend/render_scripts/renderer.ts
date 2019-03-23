@@ -1,9 +1,9 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-import {SearchResult} from "../components/SearchResult";
-import {Results} from "../components/Results";
-import {ResultGroup} from "../components/ResultGroup";
+import {SearchResult} from "../components/results/SearchResult";
+import {ResultBox} from "../components/results/ResultBox";
+import {ResultGroup} from "../components/results/ResultGroup";
 import {Builder} from "builder-pattern";
 import * as Mousetrap from "mousetrap";
 import * as $ from "jquery";
@@ -44,7 +44,7 @@ function navigateTabs(direction = "right") {
   return false;
 }
 
-let results = new Results();
+let results = new ResultBox();
 let resultgroup1 = new ResultGroup();
 let result = Builder(SearchResult)
     .path("/the/one")

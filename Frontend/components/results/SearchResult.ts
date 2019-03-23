@@ -1,6 +1,7 @@
-import {Result} from "./Result";
+import {Action} from "../Action";
+import {BaseResult} from "./BaseResult";
 
-export class SearchResult extends Result {
+export class SearchResult extends BaseResult {
   constructor(readonly filename: string, readonly service: string,
               readonly path:string, readonly modified: Date, readonly size: number) {
     super();
@@ -10,7 +11,7 @@ export class SearchResult extends Result {
     return this.path + "_" + this.service;
   }
 
-  protected icon(): string {
+  public icon(): string {
     return "themes/default/icons/services/" + this.service.toLowerCase() + ".svg";
   }
 
@@ -21,6 +22,10 @@ export class SearchResult extends Result {
 
   navigateDown():boolean { return this.navigate(() => null, () => null); }
   navigateUp():boolean { return this.navigate(() => null, () => null); }
+
+  actions(context?: Context): Action[] {
+    return [];
+  }
 
   render() {
     return this.html`
