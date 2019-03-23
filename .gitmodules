@@ -1,3 +1,0 @@
-[submodule "Frontend/libs/builder-pattern"]
-	path = Frontend/libs/builder-pattern
-	url = git@github.com:mbarnathan/builder-pattern.git

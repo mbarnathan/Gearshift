@@ -4,7 +4,7 @@
 import {SearchResult} from "../components/SearchResult";
 import {Results} from "../components/Results";
 import {ResultGroup} from "../components/ResultGroup";
-import {Builder} from "../libs/builder-pattern/src";
+import {Builder} from "builder-pattern";
 import * as Mousetrap from "mousetrap";
 import * as $ from "jquery";
 
