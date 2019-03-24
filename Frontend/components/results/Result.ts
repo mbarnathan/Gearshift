@@ -1,7 +1,7 @@
-import {Action} from "../Action";
+import {Action} from "../Actions/Action";
 import {BaseResult} from "./BaseResult";
 
-export class SearchResult extends BaseResult {
+export class Result extends BaseResult {
   constructor(readonly filename: string, readonly service: string,
               readonly path:string, readonly modified: Date, readonly size: number) {
     super();
@@ -16,18 +16,18 @@ export class SearchResult extends BaseResult {
   }
 
   // These are single results and don't contain children to navigate over.
-  navigate(wrap: Function, proceed: Function): boolean {
+  public navigate(wrap: Function, proceed: Function): boolean {
     return false;
   }
 
-  navigateDown():boolean { return this.navigate(() => null, () => null); }
-  navigateUp():boolean { return this.navigate(() => null, () => null); }
+  public navigateDown():boolean { return this.navigate(() => null, () => null); }
+  public navigateUp():boolean { return this.navigate(() => null, () => null); }
 
-  actions(context?: Context): Action[] {
+  public actions(context?: Context): Action[] {
     return [];
   }
 
-  render() {
+  public render() {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" /></td>

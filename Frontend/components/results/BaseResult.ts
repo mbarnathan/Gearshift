@@ -1,10 +1,10 @@
+import {Action} from "../Actions/Action";
 import {Actionable} from "../../capabilities/Actionable";
 import {Focusable} from "../../capabilities/Focusable";
 import hyper from "hyperhtml";
-import {Action} from "../Action";
 
 export abstract class BaseResult extends hyper.Component implements Focusable, Actionable {
-  id: string;
+  public id: string;
 
   get defaultState() {
     return {focused: false};
@@ -28,9 +28,9 @@ export abstract class BaseResult extends hyper.Component implements Focusable, A
     }
   }
 
-  abstract render(): HTMLElement;
-  abstract navigateDown(): boolean;
-  abstract navigateUp(): boolean;
-  abstract navigate(wrap: Function, proceed: Function): boolean;
-  abstract actions(context?: Context): Action[];
+  public abstract render(): HTMLElement;
+  public abstract navigateDown(): boolean;
+  public abstract navigateUp(): boolean;
+  public abstract navigate(wrap: Function, proceed: Function): boolean;
+  public abstract actions(context?: Context): Action[];
 }

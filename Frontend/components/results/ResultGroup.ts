@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import {BaseResult} from "./BaseResult";
-import {Action} from "./Action";
+import {Action} from "../Actions/Action";
+
 const LinkedMap = require("linked-map");
 
 export class ResultGroup<Child extends BaseResult> extends BaseResult {
@@ -42,19 +43,19 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   // Nested ResultGroups don't wrap their focus,
   // so that behavior is omitted here and implemented in the top level ResultBox.
 
-  navigateUp(): boolean {
+  public navigateUp(): boolean {
     return this.navigate(
         (children) => children.tailKey(),
         (children, id) => children.previousKey(id));
   }
 
-  navigateDown(): boolean {
+  public navigateDown(): boolean {
     return this.navigate(
         (children) => children.headKey(),
         (children, id) => children.nextKey(id));
   }
 
-  navigate(wrap: Function, proceed: Function): boolean {
+  public navigate(wrap: Function, proceed: Function): boolean {
     if (this.children.size() == 0) {
       // It's empty, stop here.
       return true;
@@ -84,11 +85,11 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     return false;
   }
 
-  actions(context?: Context): Action[] {
+  public actions(context?: Context): Action[] {
     return [];
   }
 
-  render() {
+  public render() {
     return this.html`
         <tbody id="${this.id}">
           <tr>
