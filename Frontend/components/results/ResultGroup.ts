@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import {BaseResult} from "./BaseResult";
-import {Action} from "../Actions/Action";
 
 const LinkedMap = require("linked-map");
 
@@ -83,10 +82,6 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
       return true;
     }
     return false;
-  }
-
-  public actions(context?: Context): Action[] {
-    return [];
   }
 
   public render() {

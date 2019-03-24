@@ -1,10 +1,21 @@
-import {Action} from "../Actions/Action";
 import {BaseResult} from "./BaseResult";
+import * as _ from "lodash";
 
 export class Result extends BaseResult {
-  constructor(readonly filename: string, readonly service: string,
-              readonly path:string, readonly modified: Date, readonly size: number) {
+  public _service?: string;
+
+  constructor(readonly filename: string, readonly path:string, readonly modified: Date,
+              readonly size: number, _service?: string) {
     super();
+    this._service = _service;
+  }
+
+  public get service(): string {
+    return this._service || _.startCase(this.constructor.name.replace(/Result$/, ""));
+  }
+
+  public set service(_service: string) {
+    this._service = _service;
   }
 
   public get id():string {
@@ -23,19 +34,20 @@ export class Result extends BaseResult {
   public navigateDown():boolean { return this.navigate(() => null, () => null); }
   public navigateUp():boolean { return this.navigate(() => null, () => null); }
 
-  public actions(context?: Context): Action[] {
-    return [];
-  }
-
   public render() {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
-          <td class="thumbnail"><img src="${this.icon()}" /></td>
+          <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
           <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified.toLocaleString()}</time></td>
           <td>${this.size}</td>
-          <td class="rightcol">${this.service}</td>
-          <td class="thumbnail"><img src="${this.icon()}" /></td>
+          <td class="rightcol">
+            <ul class="actions">
+              ${this.actions}
+            </ul>
+            ${this.service}
+          </td>
+          <td class="thumbnail"><img src="${this.icon()}" alt="${this.service}" /></td>
         </tr>`;
   }
 }

@@ -7,6 +7,7 @@ import {ResultGroup} from "../components/results/ResultGroup";
 import {Builder} from "builder-pattern";
 import * as Mousetrap from "mousetrap";
 import * as $ from "jquery";
+import {LocalFileResult} from "../components/results/services/LocalFileResult";
 
 const tabs = $("[role='tab']");
 
@@ -60,7 +61,7 @@ let result2 = Builder(Result, result)
     .modified(new Date())
     .build();
 
-let result3 = Builder(Result, result)
+let result3 = Builder(LocalFileResult, result)
     .path("/the/three")
     .filename("three")
     .modified(new Date())

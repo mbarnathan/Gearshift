@@ -156,3 +156,8 @@ tbody header {
     background-color: yellow;
     color: black;
 }
+
+ul.actions, ul.actions li {
+    display: inline;
+    padding: 0;
+}
