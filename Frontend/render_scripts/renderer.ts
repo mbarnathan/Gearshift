@@ -1,12 +1,12 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
+import * as Mousetrap from "mousetrap";
+import * as $ from "jquery";
 import {Result} from "../components/results/Result";
 import {ResultBox} from "../components/results/ResultBox";
 import {ResultGroup} from "../components/results/ResultGroup";
 import {Builder} from "builder-pattern";
-import * as Mousetrap from "mousetrap";
-import * as $ from "jquery";
 import {LocalFileResult} from "../components/results/services/LocalFileResult";
 
 const tabs = $("[role='tab']");
@@ -62,7 +62,7 @@ let result2 = Builder(Result, result)
     .build();
 
 let result3 = Builder(LocalFileResult, result)
-    .path("/the/three")
+    .path("c:\\temp")
     .filename("three")
     .modified(new Date())
     .build();

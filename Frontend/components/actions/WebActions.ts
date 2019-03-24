@@ -1,12 +1,12 @@
 import {Action} from "./Action";
 import {WebResult} from "../results/WebResult";
+import {shell} from "electron";
 
 export class BrowseWebAction extends Action<WebResult> {
-  constructor() {
-    super("Browse...", "browse.svg");
-  }
+  public get name(): string { return "Browse..."; }
+  public get icon(): string { return "browse.svg"; }
 
-  public launch(context: WebResult): void {
-    require("shell").openExternal(context.url);
+  public launch(): void {
+    shell.openExternal(this.parent.url);
   }
 }
