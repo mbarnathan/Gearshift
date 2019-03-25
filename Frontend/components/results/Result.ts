@@ -5,6 +5,7 @@ export class Result extends BaseResult {
   public _service?: string;
 
   constructor(name: string, readonly path:string, readonly modified: Date,
+              readonly mimetype: string,
               readonly size: number, _service?: string) {
     super();
     this.name = name;
@@ -20,7 +21,8 @@ export class Result extends BaseResult {
   }
 
   public get id():string {
-    return this.path + "_" + this.service;
+    let base_id = this.path + "_" + this.service;
+    return _.snakeCase(_.deburr(base_id).replace(/[\W]/g, ""));
   }
 
   public icon(): string {
