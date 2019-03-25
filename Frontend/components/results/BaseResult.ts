@@ -4,14 +4,7 @@ import hyper from "hyperhtml";
 
 export abstract class BaseResult extends hyper.Component implements Focusable {
   public id: string;
-
-  public constructor() {
-    super();
-  }
-
-  public get actions(): Action<any>[] {
-    return [];
-  }
+  public readonly actions: Action<any>[];
 
   get defaultState() {
     return {

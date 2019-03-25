@@ -4,8 +4,5 @@ import {BrowseWebAction} from "../actions/WebActions";
 
 export class WebResult extends Result {
   public url: string;
-
-  public get actions(): Action<WebResult>[] {
-    return [new BrowseWebAction(this)];
-  }
+  public readonly actions: Action<WebResult>[] = [new BrowseWebAction(this)];
 }

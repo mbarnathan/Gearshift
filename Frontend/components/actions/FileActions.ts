@@ -13,9 +13,9 @@ export class BrowseFileAction extends FileAction {
   }
 }
 
-export class RunFileAction extends FileAction {
-  public get name(): string { return "Run"; }
-  public get icon(): string { return "run.svg"; }
+export class OpenFileAction extends FileAction {
+  public get name(): string { return "Open"; }
+  public get icon(): string { return "open.svg"; }
 
   public launch(): void {
     shell.openItem(this.parent.path);
