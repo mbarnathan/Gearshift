@@ -144,11 +144,11 @@ tbody header {
     outline: none;
 }
 
-.results .filename {
+.results .name {
     color: black;
 }
 
-.results .focused, .results .focused .filename {
+.results .focused, .results .focused .name {
     color: white;
 }
 

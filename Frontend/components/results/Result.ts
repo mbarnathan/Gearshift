@@ -4,9 +4,10 @@ import * as _ from "lodash";
 export class Result extends BaseResult {
   public _service?: string;
 
-  constructor(readonly filename: string, readonly path:string, readonly modified: Date,
+  constructor(name: string, readonly path:string, readonly modified: Date,
               readonly size: number, _service?: string) {
     super();
+    this.name = name;
     this._service = _service;
   }
 
@@ -38,7 +39,7 @@ export class Result extends BaseResult {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
-          <td><span class="filename">${this.filename}</span> <span class="path">(${this.path})</span></td>
+          <td><span class="name">${this.name}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified.toLocaleString()}</time></td>
           <td>${this.size}</td>
           <td class="rightcol">

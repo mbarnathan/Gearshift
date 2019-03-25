@@ -4,6 +4,7 @@ import hyper from "hyperhtml";
 
 export abstract class BaseResult extends hyper.Component implements Focusable {
   public id: string;
+  public name: string;
   public readonly actions: Action<any>[];
 
   get defaultState() {
@@ -11,6 +12,10 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
       focused: false,
       actions: this.actions
     };
+  }
+
+  public matches(query: string): boolean {
+    return this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase());
   }
 
   public focused(): boolean {

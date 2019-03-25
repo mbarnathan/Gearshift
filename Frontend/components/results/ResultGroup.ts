@@ -4,12 +4,15 @@ import {BaseResult} from "./BaseResult";
 const LinkedMap = require("linked-map");
 
 export class ResultGroup<Child extends BaseResult> extends BaseResult {
-  public name: string;
   protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
 
   public get id():string {
     return "results_" + _.snakeCase(this.name);
+  }
+
+  public matches(query: string): boolean {
+    return true;  // Groups always match; empty groups are suppressed elsewhere.
   }
 
   public add(...children: Child[]) {

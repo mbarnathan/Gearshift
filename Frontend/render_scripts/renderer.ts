@@ -49,7 +49,7 @@ let results = new ResultBox();
 let resultgroup1 = new ResultGroup();
 let result = Builder(Result)
     .path("/the/one")
-    .filename("one")
+    .name("one")
     .modified(new Date())
     .size(1000)
     .service("Fishbox")
@@ -57,13 +57,13 @@ let result = Builder(Result)
 
 let result2 = Builder(Result, result)
     .path("/the/two")
-    .filename("two")
+    .name("two")
     .modified(new Date())
     .build();
 
 let result3 = Builder(LocalFileResult, result)
     .path("c:\\temp")
-    .filename("three")
+    .name("three")
     .modified(new Date())
     .build();
 
