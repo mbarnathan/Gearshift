@@ -6,7 +6,7 @@ export class SearchMapper {
   private searchers = new Set<SearchProvider<any>>();
 
   constructor(readonly searchInput: HTMLElement, readonly parent: ResultGroup<any>) {
-    $(searchInput).on("search", this.search);
+    $(searchInput).on("search", (evt: JQuery.Event) => this.search(evt));
   }
 
   register(searcher: SearchProvider<any>): SearchMapper {
@@ -20,8 +20,10 @@ export class SearchMapper {
     if (!query) {
       return;
     }
+    query = query.toString();
+    console.log("Searching for " + query);
     for (let searcher of this.searchers) {
-      searcher.search(query.toString()).then(result => searcher.heading.replace(...result));
+      searcher.search(query).then(result => searcher.heading.replace(...result));
     }
   }
 }

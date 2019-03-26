@@ -1,18 +1,19 @@
-import { escape } from "sqlstring";
-import {LocalFileResult} from "../components/results/services/LocalFileResult";
+import {escape} from "sqlstring";
 import {Builder} from "builder-pattern";
+import {LocalFileResult} from "../../../results/services/LocalFileResult";
 
 const winSearchURI = 'Provider=Search.CollatorDSO;Extended Properties="Application=Windows"';
 
-module.exports.search = function(query) {
-  return querySearchIndex(query)[0].map(transformResult);
+module.exports.search = function(query: string) {
+  return querySearchIndex(query).then(results => results["result"][0]);
 };
 
-function querySearchIndex(query: string):Object {
+function querySearchIndex(query: string):Promise<Object> {
   let oledb = require("oledb-electron");
   let connection = oledb.oledbConnection(winSearchURI);
   // Parameters can't be bound with this provider, so the query is escaped instead.
   const escaped = escape(`%${query}%`);
+  // noinspection SqlDialectInspection, SqlNoDataSourceInspection
   const sql = `
 SELECT System.ItemName, System.ItemNameDisplay, System.DateModified, System.ContentType, 
 System.IsDeleted, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
@@ -20,18 +21,4 @@ System.Keywords, System.Size, System.Title
 FROM SystemIndex 
 WHERE System.ItemName LIKE ${escaped}`;
   return connection.query(sql);
-}
-
-function transformResult(result: Object): LocalFileResult|undefined {
-  if (!result) {
-    return undefined;
-  }
-
-  return Builder(LocalFileResult)
-      .name(result["SYSTEM.TITLE"] || result["SYSTEM.ITEMNAME"])
-      .mimetype(result["SYSTEM.CONTENTTYPE"])
-      .path(result["SYSTEM.ITEMPATHDISPLAY"])
-      .size(parseInt(result["SYSTEM.SIZE"]))
-      .modified(result["SYSTEM.DATEMODIFIED"])
-      .build();
 }

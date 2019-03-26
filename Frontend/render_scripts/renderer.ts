@@ -8,20 +8,21 @@ import {ResultBox} from "../components/results/ResultBox";
 import {ResultGroup} from "../components/results/ResultGroup";
 import {Builder} from "builder-pattern";
 import {LocalFileResult} from "../components/results/services/LocalFileResult";
+import {SearchMapper} from "../components/SearchMapper";
 
 const tabs = $("[role='tab']");
 
-tabs.on("focus", function () {
+tabs.on("focus", (evt: JQuery.Event) => {
   let tabs = $(this).siblings("[role='tab']");
   tabs.removeClass("active");
   $(this).addClass("active");
 });
 
-$(window).on("focus", function() {
+$(window).on("focus", (evt: JQuery.Event) => {
   $("#search").focus().select();
 });
 
-$(window).on("keydown", function() {
+$(window).on("keydown", (evt: JQuery.Event) => {
   $("#search").focus();
 });
 
@@ -73,6 +74,17 @@ let resultgroup2 = new ResultGroup("fishy").add(result3);
 
 results.add(resultgroup1);
 results.add(resultgroup2);
+
+let searchBox = document.getElementById("search");
+if (!searchBox) {
+  throw new ReferenceError("Can't find search box with ID 'search'");
+}
+
+let mapper = new SearchMapper(searchBox, results);
+if (process.platform.startsWith("win")) {
+  let winsearch = require("../components/searchproviders/local/windows/WindowsSearch");
+  mapper.register(new winsearch.WindowsSearch());
+}
 
 results.bind(document.getElementById("result_container"));
 results.bindArrowKeys();
