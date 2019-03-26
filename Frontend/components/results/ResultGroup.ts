@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import {BaseResult} from "./BaseResult";
 
 const LinkedMap = require("linked-map");
@@ -7,8 +6,9 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
 
-  public get id():string {
-    return "results_" + _.snakeCase(this.name);
+  public constructor(name: string) {
+    super();
+    this.name = name;
   }
 
   public matches(query: string): boolean {
@@ -19,6 +19,12 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     for (let child of children) {
       this.children.push(child.id, child);
     }
+    return this;
+  }
+
+  public replace(...new_items: Child[]) {
+    this.children = new_items;
+    return this;
   }
 
   public focusChild(child: Child|null):void {

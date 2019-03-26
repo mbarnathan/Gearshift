@@ -1,16 +1,11 @@
 import {ResultGroup} from "./ResultGroup";
 import {BaseResult} from "./BaseResult";
 import {hyper} from "hyperhtml";
+import * as _ from "lodash";
 
 export class ResultBox extends ResultGroup<BaseResult> {
-  private _id?:string;
-
   public get id():string {
-    return this._id || "results";
-  }
-
-  public set id(new_id:string) {
-    this._id = new_id;
+    return _.snakeCase(this.name);
   }
 
   public navigate(wrap: Function, proceed: Function): boolean {

@@ -1,9 +1,9 @@
 import {Action} from "../actions/Action";
 import {Focusable} from "../../capabilities/Focusable";
 import hyper from "hyperhtml";
+import * as _ from "lodash";
 
 export abstract class BaseResult extends hyper.Component implements Focusable {
-  public id: string;
   public name: string;
   public readonly actions: Action<any>[];
 
@@ -12,6 +12,10 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
       focused: false,
       actions: this.actions
     };
+  }
+
+  public get id():string {
+    return "results_" + _.snakeCase(this.name);
   }
 
   public matches(query: string): boolean {

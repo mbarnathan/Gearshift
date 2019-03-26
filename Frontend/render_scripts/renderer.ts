@@ -45,8 +45,8 @@ function navigateTabs(direction = "right") {
   return false;
 }
 
-let results = new ResultBox();
-let resultgroup1 = new ResultGroup();
+let results = new ResultBox("Results");
+let resultgroup1 = new ResultGroup("fishsticks");
 let result = Builder(Result)
     .path("/the/one")
     .name("one")
@@ -67,12 +67,9 @@ let result3 = Builder(LocalFileResult, result)
     .modified(new Date())
     .build();
 
-resultgroup1.name = "fishsticks";
 resultgroup1.add(result, result2);
 
-let resultgroup2 = new ResultGroup();
-resultgroup2.name = "fishy";
-resultgroup2.add(result3);
+let resultgroup2 = new ResultGroup("fishy").add(result3);
 
 results.add(resultgroup1);
 results.add(resultgroup2);
