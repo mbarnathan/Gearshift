@@ -12,8 +12,7 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
     const searchWorkers = requireTaskPool(require.resolve('./multiprocess_worker'));
     return searchWorkers
         .search(query)
-        .then(results => results.map(WindowsSearch.transformResult))
-        .then(results => console.log(results));
+        .then(results => results.map(WindowsSearch.transformResult));
   }
 
   private static transformResult(result: Object): LocalFileResult|undefined {

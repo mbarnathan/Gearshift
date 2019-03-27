@@ -6,6 +6,12 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
 
+  get defaultState() {
+    let state = super.defaultState;
+    state["children"] = this.children;
+    return state;
+  }
+
   public constructor(name: string) {
     super();
     this.name = name;
@@ -23,7 +29,10 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   }
 
   public replace(...new_items: Child[]) {
-    this.children = new_items;
+    this.children.clear();
+    for (let new_item of new_items) {
+      this.add(new_item);
+    }
     return this;
   }
 
