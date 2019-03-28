@@ -5,6 +5,7 @@ import * as _ from "lodash";
 
 export abstract class BaseResult extends hyper.Component implements Focusable {
   public name: string;
+  public element: HTMLElement;
   public readonly actions: Action<any>[];
 
   get defaultState() {
@@ -37,6 +38,7 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
   public bind(element: HTMLElement|null) {
     if (element != null) {
       hyper(element)`${this}`;
+      this.element = element;
     }
   }
 

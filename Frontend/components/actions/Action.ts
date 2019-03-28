@@ -4,7 +4,6 @@ import * as _ from "lodash";
 
 export abstract class Action<ResultType extends Result> extends hyper.Component {
   protected _name?: string;
-  protected _icon?: string;
 
   public constructor(protected readonly parent: ResultType) {
     super();
@@ -17,8 +16,13 @@ export abstract class Action<ResultType extends Result> extends hyper.Component 
     };
   }
 
+  public get icon_filename(): string {
+    return "";
+  }
+
   public get icon(): string {
-    return (this._icon) ? ("themes/default/icons/actions/" + this._icon) : "";
+    let icon_name = this.icon_filename;
+    return (icon_name) ? ("themes/default/icons/actions/" + icon_name) : "";
   }
 
   public get name(): string {

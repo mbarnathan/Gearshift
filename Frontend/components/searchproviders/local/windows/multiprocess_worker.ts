@@ -1,6 +1,4 @@
 import {escape} from "sqlstring";
-import {Builder} from "builder-pattern";
-import {LocalFileResult} from "../../../results/services/LocalFileResult";
 
 const winSearchURI = 'Provider=Search.CollatorDSO;Extended Properties="Application=Windows"';
 
@@ -17,8 +15,9 @@ function querySearchIndex(query: string):Promise<Object> {
   const sql = `
 SELECT System.ItemName, System.ItemNameDisplay, System.DateModified, System.ContentType, 
 System.IsDeleted, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
-System.Keywords, System.Size, System.Title 
+System.Keywords, System.Size, System.Title, System.Search.Rank 
 FROM SystemIndex 
-WHERE System.ItemName LIKE ${escaped}`;
+WHERE System.ItemName LIKE ${escaped}
+ORDER BY System.Search.Rank DESC, System.DateModified DESC`;
   return connection.query(sql);
 }

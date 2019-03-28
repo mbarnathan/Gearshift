@@ -41,7 +41,7 @@ export class Result extends BaseResult {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
-          <td><span class="name">${this.name}</span> <span class="path">(${this.path})</span></td>
+          <td class="filename"><span class="name">${this.name}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified.toLocaleString()}</time></td>
           <td>${this.size}</td>
           <td class="rightcol">

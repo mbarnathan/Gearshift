@@ -72,10 +72,14 @@ nav + input[type="search"] {
 }
 
 .results {
+    display: block;
     width: 100%;
     box-sizing: border-box;
     color: #999999;
     cursor: default;
+    overflow-y: auto;
+    max-height: 100vh;
+    position: relative;
 }
 
 .results td {
@@ -160,4 +164,10 @@ tbody header {
 ul.actions, ul.actions li {
     display: inline;
     padding: 0;
+}
+
+td.filename {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 20vw;
 }

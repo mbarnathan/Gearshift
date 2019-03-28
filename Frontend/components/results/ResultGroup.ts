@@ -33,6 +33,8 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     for (let new_item of new_items) {
       this.add(new_item);
     }
+    this.focusedChild = null;  // TODO(mb): This is a hack.
+    this.render();
     return this;
   }
 

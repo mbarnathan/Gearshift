@@ -2,6 +2,8 @@ import {ResultGroup} from "./ResultGroup";
 import {BaseResult} from "./BaseResult";
 import {hyper} from "hyperhtml";
 import * as _ from "lodash";
+import * as $ from "jquery";
+import "jquery.scrollto";
 
 export class ResultBox extends ResultGroup<BaseResult> {
   public get id():string {
@@ -9,11 +11,16 @@ export class ResultBox extends ResultGroup<BaseResult> {
   }
 
   public navigate(wrap: Function, proceed: Function): boolean {
+    let nestedResult = true;
     if (!super.navigate(wrap, proceed)) {
       // Hit bottom or empty selection and focus is now cleared; nav again to wrap to top.
-      return this.navigate(wrap, proceed);
+      nestedResult = this.navigate(wrap, proceed);
     }
-    return true;
+    if (this.element) {
+      let focused = $(this.element).find(".focused").first();
+      $(this.element).find(".results").scrollTo(focused);
+    }
+    return nestedResult;
   }
 
   render() {
@@ -30,7 +37,7 @@ export class ResultBox extends ResultGroup<BaseResult> {
   }
 
   bindArrowKeys() {
-    Mousetrap.bind("up", () => this.navigateUp());
-    Mousetrap.bind("down", () => this.navigateDown());
+    Mousetrap.bind("up", () => {this.navigateUp(); return false});
+    Mousetrap.bind("down", () => {this.navigateDown(); return false});
   }
 }
