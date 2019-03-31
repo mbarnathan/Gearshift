@@ -21,6 +21,12 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     return true;  // Groups always match; empty groups are suppressed elsewhere.
   }
 
+  public highlight(query: string): void {
+    for (let child of this.children.values()) {
+      child.highlight(query);
+    }
+  }
+
   public add(...children: Child[]) {
     for (let child of children) {
       this.children.push(child.id, child);

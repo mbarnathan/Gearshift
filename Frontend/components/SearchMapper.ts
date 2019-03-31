@@ -7,6 +7,7 @@ export class SearchMapper {
 
   constructor(readonly searchInput: HTMLElement, readonly parent: ResultGroup<any>) {
     $(searchInput).on("search", (evt: JQuery.Event) => this.search(evt));
+    $(searchInput).on("input", (evt: JQuery.Event) => this.highlight(evt));
   }
 
   register(searcher: SearchProvider<any>): SearchMapper {
@@ -15,15 +16,22 @@ export class SearchMapper {
     return this;
   }
 
+  private highlight(event: JQuery.Event) {
+    let query = ($(this.searchInput).val() || "").toString();
+    this.parent.highlight(query);
+  }
+
   private search(event: JQuery.Event) {
-    let query = $(this.searchInput).val();
+    let query = ($(this.searchInput).val() || "").toString();
     if (!query) {
       return;
     }
-    query = query.toString();
     console.log("Searching for " + query);
     for (let searcher of this.searchers) {
-      searcher.search(query).then(result => searcher.heading.replace(...result));
+      searcher.search(query).then(result => {
+        searcher.heading.replace(...result);
+        searcher.heading.highlight(query);
+      });
     }
   }
 }

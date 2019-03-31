@@ -1,10 +1,10 @@
 import {BaseResult} from "./BaseResult";
 import * as _ from "lodash";
-import * as $ from "jquery";
 import hyper from "hyperhtml";
 
 export class Result extends BaseResult {
   public _service?: string;
+  private _highlit_name?: string[];
 
   constructor(name: string, readonly path:string, readonly modified: Date,
               readonly mimetype: string,
@@ -12,6 +12,14 @@ export class Result extends BaseResult {
     super();
     this.name = name;
     this._service = _service;
+  }
+
+  private get highlit_name(): string[] {
+    return this._highlit_name || [this.name];
+  }
+
+  private set highlit_name(value: string[]) {
+    this._highlit_name = value;
   }
 
   public get service(): string {
@@ -39,26 +47,36 @@ export class Result extends BaseResult {
   public navigateDown():boolean { return this.navigate(() => null, () => null); }
   public navigateUp():boolean { return this.navigate(() => null, () => null); }
 
-  public render() {
-    let query = $("#search").val();
-    let name = [this.name];
-    if (query) {
-      // TODO(mb): Don't want to recreate this regex over and over.
-      let regex = new RegExp(`(${query})`, "igu");
-      let groups = this.name.split(regex);
-      for (let group_idx in groups) {
-        if (groups[group_idx].toLocaleLowerCase() == query.toString().toLocaleLowerCase()) {
-          groups[group_idx] = hyper`<span class="match">${groups[group_idx]}</span>`;
-        } else {
-          groups[group_idx] = hyper`${groups[group_idx]}`;
-        }
-      }
-      name = groups;
+  private highlight_groups(text: string, query: string): string[] {
+    if (!text || !query) {
+      return [text];
     }
+    // TODO(mb): Don't want to recreate this regex over and over.
+    let regex = new RegExp(`(${query})`, "igu");
+    let groups = text.split(regex);
+    for (let group_idx in groups) {
+      if (groups[group_idx].toLocaleLowerCase() == query.toString().toLocaleLowerCase()) {
+        groups[group_idx] = `<span class="match">${groups[group_idx]}</span>`;
+      } else {
+        groups[group_idx] = `${groups[group_idx]}`;
+      }
+    }
+    return groups;
+  }
+
+  public highlight(query: string): void {
+    let old_highlit = this.highlit_name;
+    this.highlit_name = this.highlight_groups(this.name, query);
+    if (this.highlit_name != old_highlit) {
+      this.render();
+    }
+  }
+
+  public render() {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
-          <td class="filename"><span class="name">${name}</span> <span class="path">(${this.path})</span></td>
+          <td class="filename"><span class="name">${this.highlit_name}</span> <span class="path">(${this.path})</span></td>
           <td><time>${this.modified.toLocaleString()}</time></td>
           <td>${this.size}</td>
           <td class="rightcol">

@@ -46,4 +46,5 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
   public abstract navigateDown(): boolean;
   public abstract navigateUp(): boolean;
   public abstract navigate(wrap: Function, proceed: Function): boolean;
+  public abstract highlight(query: string): void;
 }
