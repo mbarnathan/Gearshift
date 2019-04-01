@@ -20,7 +20,8 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
   }
 
   public matches(query: string): boolean {
-    return this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase());
+    return this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase()) ||
+        new RegExp(`^${query}`, "iu").test(this.name);
   }
 
   public focused(): boolean {

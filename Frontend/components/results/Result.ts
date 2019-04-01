@@ -53,7 +53,7 @@ export class Result extends BaseResult {
     let regex = new RegExp(`(${query})`, "igu");
     let groups = text.split(regex);
     for (let group_idx in groups) {
-      if (groups[group_idx].toLocaleLowerCase() == query.toString().toLocaleLowerCase()) {
+      if (regex.test(groups[group_idx])) {
         groups[group_idx] = `<span class="match">${groups[group_idx]}</span>`;
       } else {
         groups[group_idx] = `${groups[group_idx]}`;
