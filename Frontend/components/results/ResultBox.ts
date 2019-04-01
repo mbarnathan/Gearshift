@@ -39,5 +39,11 @@ export class ResultBox extends ResultGroup<BaseResult> {
   bindArrowKeys() {
     Mousetrap.bind("up", () => {this.navigateUp(); return false});
     Mousetrap.bind("down", () => {this.navigateDown(); return false});
+
+    // TODO(mb): Better paging.
+    Mousetrap.bind("pageup", () => {for (let i = 0; i < 10; i++) { this.navigateUp(); }; return false});
+    Mousetrap.bind("pagedown", () => {for (let i = 0; i < 10; i++) { this.navigateDown(); }; return false});
+
+    Mousetrap.bind("enter", () => {this.activate(); return false});
   }
 }

@@ -1,6 +1,5 @@
 import {BaseResult} from "./BaseResult";
 import * as _ from "lodash";
-import hyper from "hyperhtml";
 
 export class Result extends BaseResult {
   public _service?: string;
@@ -51,7 +50,6 @@ export class Result extends BaseResult {
     if (!text || !query) {
       return [text];
     }
-    // TODO(mb): Don't want to recreate this regex over and over.
     let regex = new RegExp(`(${query})`, "igu");
     let groups = text.split(regex);
     for (let group_idx in groups) {
@@ -72,13 +70,37 @@ export class Result extends BaseResult {
     }
   }
 
+  public format_size(size_in_bytes: number): string {
+    if (isNaN(size_in_bytes)) {
+      return "";
+    }
+
+    if (size_in_bytes < 1000) {
+      return `${size_in_bytes} bytes`;
+    }
+
+    if (size_in_bytes < 10 ** 6) {
+      return `${(size_in_bytes / 2 ** 10).toFixed(1)} KB`;
+    }
+
+    if (size_in_bytes < 10 ** 9) {
+      return `${(size_in_bytes / 2 ** 20).toFixed(1)} MB`;
+    }
+
+    if (size_in_bytes < 10 ** 12) {
+      return `${(size_in_bytes / 2 ** 30).toFixed(1)} GB`;
+    }
+
+    return `${(size_in_bytes / 2 ** 40).toFixed(1)} TB`;
+  }
+
   public render() {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
           <td class="filename"><span class="name">${this.highlit_name}</span> <span class="path">(${this.path})</span></td>
-          <td><time>${this.modified.toLocaleString()}</time></td>
-          <td>${this.size}</td>
+          <td class="modified"><time>${this.modified.toLocaleString()}</time></td>
+          <td class="size">${this.format_size(this.size)}</td>
           <td class="rightcol">
             <ul class="actions">
               ${this.actions}

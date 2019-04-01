@@ -44,6 +44,21 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     return this;
   }
 
+  /** Take the default (first) action on this element. */
+  public activate(): void {
+    if (this.focusedChild) {
+      this.focusedChild.activate();
+    } else {
+      // In case the group has actions defined (this is not common, but possible).
+      super.activate();
+    }
+  }
+
+  public blur(): void {
+    super.blur();
+    this.focusChildId(null);
+  }
+
   public focusChild(child: Child|null):void {
     this.focusChildId((child) ? child.id : null);
   }

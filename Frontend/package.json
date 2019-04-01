@@ -45,6 +45,7 @@
     "lodash": "^4.17.11",
     "mousetrap": "^1.6.3",
     "oledb-electron": "^1.0.0",
-    "sqlstring": "^2.3.1"
+    "sqlstring": "^2.3.1",
+    "trie-mapping": "^1.0.1"
   }
 }

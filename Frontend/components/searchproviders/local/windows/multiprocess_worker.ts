@@ -13,11 +13,11 @@ function querySearchIndex(query: string):Promise<Object> {
   const escaped = escape(`%${query}%`);
   // noinspection SqlDialectInspection, SqlNoDataSourceInspection
   const sql = `
-SELECT System.ItemName, System.ItemNameDisplay, System.DateModified, System.ContentType, 
+SELECT TOP 1000 System.ItemName, System.ItemNameDisplay, System.DateModified, System.ContentType, 
 System.IsDeleted, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
 System.Keywords, System.Size, System.Title, System.Search.Rank 
 FROM SystemIndex 
-WHERE System.ItemName LIKE ${escaped}
-ORDER BY System.Search.Rank DESC, System.DateModified DESC`;
+WHERE System.ItemNameDisplay LIKE ${escaped}
+ORDER BY System.Search.Rank DESC, System.Search.HitCount DESC, System.DateAccessed DESC`;
   return connection.query(sql);
 }

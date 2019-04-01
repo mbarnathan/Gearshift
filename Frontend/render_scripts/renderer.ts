@@ -7,7 +7,6 @@ import {Result} from "../components/results/Result";
 import {ResultBox} from "../components/results/ResultBox";
 import {ResultGroup} from "../components/results/ResultGroup";
 import {Builder} from "builder-pattern";
-import {LocalFileResult} from "../components/results/services/LocalFileResult";
 import {SearchMapper} from "../components/SearchMapper";
 
 const tabs = $("[role='tab']");
@@ -47,7 +46,7 @@ function navigateTabs(direction = "right") {
 }
 
 let results = new ResultBox("Results");
-let resultgroup1 = new ResultGroup("fishsticks");
+let recents = new ResultGroup("Recent Files");
 let result = Builder(Result)
     .path("/the/one")
     .name("one")
@@ -56,24 +55,8 @@ let result = Builder(Result)
     .service("Fishbox")
     .build();
 
-let result2 = Builder(Result, result)
-    .path("/the/two")
-    .name("two")
-    .modified(new Date())
-    .build();
-
-let result3 = Builder(LocalFileResult, result)
-    .path("c:\\temp")
-    .name("three")
-    .modified(new Date())
-    .build();
-
-resultgroup1.add(result, result2);
-
-let resultgroup2 = new ResultGroup("fishy").add(result3);
-
-results.add(resultgroup1);
-results.add(resultgroup2);
+recents.add(result);
+results.add(recents);
 
 let searchBox = document.getElementById("search");
 if (!searchBox) {

@@ -35,6 +35,13 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
     this.setState({focused: true});
   }
 
+  /** Take the default (first) action on this element. */
+  public activate(): void {
+    if (this.actions) {
+      this.actions[0].launch();
+    }
+  }
+
   public bind(element: HTMLElement|null) {
     if (element != null) {
       hyper(element)`${this}`;
