@@ -4,6 +4,7 @@ import {SearchProvider} from "../../../../capabilities/SearchProvider";
 import {ResultGroup} from "../../../results/ResultGroup";
 import {Builder} from "builder-pattern";
 import * as trieMapping from "trie-mapping";
+let fs = require("fs");
 
 export class WindowsSearch implements SearchProvider<LocalFileResult> {
   readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Local Files");
@@ -12,7 +13,7 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
   public search(query: string): Promise<LocalFileResult[]> {
     console.log("Searching Windows for " + query);
     let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
-    return searchResults.then(results => results.filter(r => r.matches(query)));
+    return searchResults.then(results => results.filter(r => r && r.matches(query)));
   }
 
   private cachedSearch(query: string): Promise<LocalFileResult[]>|undefined {
@@ -21,7 +22,6 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
         (a, b) => b[0].length - a[0].length
     );
     if (prefixes.length > 0) {
-      console.log("Found cached prefixes: " + prefixes.map(p => p[0]));
       return Promise.resolve(prefixes[0][1]);
     }
     return undefined;
@@ -39,20 +39,21 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
 
     return searchWorkers
         .search(query)
-        .then(transformAndCache);
+        .then(transformAndCache)
+        .then(r => { console.log(r); return r});
   }
 
   private static transformResult(result: Object): LocalFileResult|undefined {
-    if (!result) {
+    if (!result || !fs.existsSync(result["SYSTEM.ITEMPATHDISPLAY"])) {
       return undefined;
     }
-
     return Builder(LocalFileResult)
-        .name(result["SYSTEM.TITLE"] || result["SYSTEM.ITEMNAME"])
-        .mimetype(result["SYSTEM.CONTENTTYPE"])
+        .name(result["SYSTEM.TITLE"] || result["SYSTEM.ITEMNAMEDISPLAY"] || result["SYSTEM.ITEMNAME"])
+        .mimetype(result["SYSTEM.MIMETYPE"])
         .path(result["SYSTEM.ITEMPATHDISPLAY"])
         .size(parseInt(result["SYSTEM.SIZE"]))
         .modified(result["SYSTEM.DATEMODIFIED"])
+        .properties(result)
         .build();
   }
 }

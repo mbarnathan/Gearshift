@@ -23,9 +23,13 @@ export class ResultBox extends ResultGroup<BaseResult> {
     return nestedResult;
   }
 
+  public ondblclick(evt: MouseEvent) {
+    evt.preventDefault();
+  }
+
   render() {
     return hyper`
-<table id="${this.id}" class="results" cellspacing="0" cellpadding="0">
+<table id="${this.id}" onclick="${this}" ondblclick="${this}" class="results" cellspacing="0" cellpadding="0">
   <thead>
     <tr>
       <th colspan="2">Name</th>

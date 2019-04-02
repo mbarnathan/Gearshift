@@ -65,6 +65,10 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
 
   public focusChildId(child_id: string|null):void {
     if (this.focusedChild) {
+      if (this.focusedChild.id == child_id) {
+        return;  // Already focused.
+      }
+
       this.focusedChild.blur();
       this.focusedChild = null;
     }
@@ -125,9 +129,35 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     return false;
   }
 
+  protected childFromMouseEvent(evt: MouseEvent): Child|null {
+    for (let target of evt.composedPath()) {
+      let element = target as Element;
+      let child = this.children.get(element.id);
+      if (child) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  public onclick(evt: MouseEvent) {
+    let clicked = this.childFromMouseEvent(evt);
+    if (clicked) {
+      this.focusChild(clicked);
+    }
+  }
+
+  public ondblclick(evt: MouseEvent) {
+    evt.preventDefault();
+    let clicked = this.childFromMouseEvent(evt);
+    if (clicked) {
+      clicked.activate();
+    }
+  }
+
   public render() {
     return this.html`
-        <tbody id="${this.id}">
+        <tbody id="${this.id}" onclick="${this}" ondblclick="${this}">
           <tr>
             <th colspan="1000">
               <header><h2>${this.name}</h2>

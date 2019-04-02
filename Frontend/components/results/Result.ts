@@ -7,7 +7,7 @@ export class Result extends BaseResult {
 
   constructor(name: string, readonly path:string, readonly modified: Date,
               readonly mimetype: string,
-              readonly size: number, _service?: string) {
+              readonly size: number, readonly properties: Object = {}, _service?: string) {
     super();
     this.name = name;
     this._service = _service;
@@ -96,9 +96,9 @@ export class Result extends BaseResult {
 
   public render() {
     return this.html`
-        <tr class="${this.focused() ? "focused" : "unfocused"}">
+        <tr class="${this.focused() ? "focused" : "unfocused"}" id="${this.id}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
-          <td class="filename"><span class="name">${this.highlit_name}</span> <span class="path">(${this.path})</span></td>
+          <td class="filename"><span class="name" title="${this.name}">${this.highlit_name}</span> <span class="path" title="${this.path}">(${this.path})</span></td>
           <td class="modified"><time>${this.modified.toLocaleString()}</time></td>
           <td class="size">${this.format_size(this.size)}</td>
           <td class="rightcol">
