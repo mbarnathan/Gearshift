@@ -14,17 +14,17 @@ function querySearchIndex(query: string):Promise<Object> {
   const escaped_like = escape(`%${query}%`);
   // noinspection SqlDialectInspection, SqlNoDataSourceInspection
   const sql = `
-SELECT TOP 1000 System.ItemName, System.ItemNameDisplay, System.DateModified, System.MIMEType, 
+SELECT TOP 500 System.ItemName, System.ItemNameDisplay, System.DateModified, System.MIMEType, 
 System.IsDeleted, System.Search.Store, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
-System.Keywords, System.Size, System.Title, System.Search.Rank 
+System.Keywords, System.Size, System.Title, System.Search.Rank, System.Search.HitCount 
 FROM SystemIndex 
-WHERE System.MIMEType != 'message/rfc822'
+WHERE
+WITH("System.ItemNameDisplay", "System.Title", "System.Keywords") AS #Titles
+  System.MIMEType != 'message/rfc822'
 AND (
-    CONTAINS(System.ItemName, ${escaped}) RANK BY WEIGHT ( 1.000 )
-    OR CONTAINS(System.ItemNameDisplay, ${escaped}) RANK BY WEIGHT ( 1.000 )
-    OR CONTAINS(System.Title, ${escaped}) RANK BY WEIGHT ( 1.000 )
-    OR CONTAINS(System.ItemPathDisplay, ${escaped}) RANK BY WEIGHT ( 0.750 )
+  CONTAINS(#Titles, ${escaped}) RANK BY WEIGHT ( 1.0 ) 
+  OR System.ItemPathDisplay LIKE ${escaped_like}
 )
-ORDER BY System.Search.Rank DESC, System.Search.HitCount DESC, System.DateAccessed DESC`;
+ORDER BY System.DateAccessed DESC, System.Search.Rank DESC, System.Search.HitCount DESC`;
   return connection.query(sql);
 }

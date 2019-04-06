@@ -7,7 +7,7 @@ import * as trieMapping from "trie-mapping";
 let fs = require("fs");
 
 export class WindowsSearch implements SearchProvider<LocalFileResult> {
-  readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Local Files");
+  readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Windows Search");
   readonly cached_results = trieMapping();
 
   public search(query: string): Promise<LocalFileResult[]> {
