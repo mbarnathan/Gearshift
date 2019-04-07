@@ -6,6 +6,7 @@ export class Result extends BaseResult {
   private _highlit_name?: string[];
 
   constructor(name: string, readonly path:string, readonly modified: Date,
+              readonly accessed: Date|null = null,
               readonly mimetype: string,
               readonly size: number, readonly properties: Object = {}, _service?: string) {
     super();
@@ -100,6 +101,7 @@ export class Result extends BaseResult {
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>
           <td class="filename"><span class="name" title="${this.name}">${this.highlit_name}</span> <span class="path" title="${this.path}">(${this.path})</span></td>
           <td class="modified"><time>${this.modified.toLocaleString()}</time></td>
+          <td class="accessed"><time>${(this.accessed || "Never").toLocaleString()}</time></td>
           <td class="size">${this.format_size(this.size)}</td>
           <td class="rightcol">
             <ul class="actions">

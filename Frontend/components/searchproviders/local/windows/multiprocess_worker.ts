@@ -14,10 +14,11 @@ function querySearchIndex(query: string):Promise<Object> {
   const escaped_like = escape(`%${query}%`);
   // noinspection SqlDialectInspection, SqlNoDataSourceInspection
   const sql = `
-SELECT TOP 500 System.ItemName, System.ItemNameDisplay, System.DateModified, System.MIMEType, 
-System.IsDeleted, System.Search.Store, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
-System.Keywords, System.Size, System.Title, System.Search.Rank, System.Search.HitCount 
-FROM SystemIndex 
+SELECT TOP 500 System.ItemName, System.ItemNameDisplay, System.DateModified, System.DateAccessed,
+System.MIMEType, System.IsEncrypted, System.ItemType, System.ItemTypeText, System.ItemPathDisplay, 
+System.Keywords, System.Size, System.Title, 
+System.Search.Store, System.Search.Rank, System.Search.HitCount
+FROM SystemIndex
 WHERE
 WITH("System.ItemNameDisplay", "System.Title", "System.Keywords") AS #Titles
   System.MIMEType != 'message/rfc822'
