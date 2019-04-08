@@ -66,7 +66,7 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
         .size(parseInt(result["SYSTEM.SIZE"]))
         .modified(result["SYSTEM.DATEMODIFIED"])
         .accessed(result["SYSTEM.DATEACCESSED"])
-        .properties(result)
+        .properties(result);
 
     // Update with the live stat data.
     if (stat.atimeMs) { fileProps.accessed(new Date(stat.atimeMs)) }

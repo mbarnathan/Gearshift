@@ -26,6 +26,6 @@ AND (
   CONTAINS(#Titles, ${escaped}) RANK BY WEIGHT ( 1.0 ) 
   OR System.ItemPathDisplay LIKE ${escaped_like}
 )
-ORDER BY System.DateAccessed DESC, System.Search.Rank DESC, System.Search.HitCount DESC`;
+ORDER BY System.Search.Rank DESC, System.Search.HitCount DESC, System.DateAccessed DESC`;
   return connection.query(sql);
 }

@@ -35,11 +35,19 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   }
 
   public replace(...new_items: Child[]) {
+    let oldFocus: string|null = this.focusedChild ? this.focusedChild.id : null;
     this.children.clear();
+    let newFocus: string|null = null;
     for (let new_item of new_items) {
+      if (new_item.id == oldFocus) {
+        newFocus = new_item.id;
+      }
       this.add(new_item);
     }
-    this.focusedChild = null;  // TODO(mb): This is a hack.
+    newFocus = newFocus || this.children.headKey();
+    if (newFocus && this.focused()) {
+      this.focusChildId(newFocus);
+    }
     this.render();
     return this;
   }
@@ -87,6 +95,10 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   // Nested ResultGroups don't wrap their focus,
   // so that behavior is omitted here and implemented in the top level ResultBox.
 
+  private static nextToFocus(children, id: string): string {
+    return children.nextKey(id);
+  }
+
   public navigateUp(): boolean {
     return this.navigate(
         (children) => children.tailKey(),
@@ -94,9 +106,7 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
   }
 
   public navigateDown(): boolean {
-    return this.navigate(
-        (children) => children.headKey(),
-        (children, id) => children.nextKey(id));
+    return this.navigate((children) => children.headKey(), ResultGroup.nextToFocus);
   }
 
   public navigate(wrap: Function, proceed: Function): boolean {
