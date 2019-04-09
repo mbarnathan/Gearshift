@@ -95,7 +95,7 @@ export class Result extends BaseResult {
     return `${(size_in_bytes / 2 ** 40).toFixed(1)} TB`;
   }
 
-  public render() {
+  public renderIfVisible() {
     return this.html`
         <tr class="${this.focused() ? "focused" : "unfocused"}" id="${this.id}">
           <td class="thumbnail"><img src="${this.icon()}" alt="" /></td>

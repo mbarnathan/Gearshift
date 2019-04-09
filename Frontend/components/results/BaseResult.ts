@@ -2,8 +2,9 @@ import {Action} from "../actions/Action";
 import {Focusable} from "../../capabilities/Focusable";
 import hyper from "hyperhtml";
 import * as _ from "lodash";
+import {CanHide} from "../../capabilities/CanHide";
 
-export abstract class BaseResult extends hyper.Component implements Focusable {
+export abstract class BaseResult extends hyper.Component implements Focusable, CanHide {
   public name: string;
   public element: HTMLElement;
   public readonly actions: Action<any>[];
@@ -11,17 +12,28 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
   get defaultState() {
     return {
       focused: false,
+      visible: true,
       actions: this.actions
     };
+  }
+
+  public get visible(): boolean {
+    return this.state["visible"];
+  }
+
+  public set visible(show: boolean) {
+    this.setState({visible: show});
   }
 
   public get id():string {
     return "results_" + _.snakeCase(this.name);
   }
 
-  public matches(query: string): boolean {
-    return this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase()) ||
-        new RegExp(`${query}`, "iu").test(this.name);
+  public score(query: string): number {
+    return (this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase()) ||
+        new RegExp(`${query}`, "iu").test(this.name))
+        ? 1.0
+        : 0.0;
   }
 
   public focused(): boolean {
@@ -50,7 +62,11 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
     }
   }
 
-  public abstract render(): HTMLElement;
+  public render(): HTMLElement {
+    return this.visible ? this.renderIfVisible() : this.html``;
+  }
+
+  public abstract renderIfVisible(): HTMLElement;
   public abstract navigateDown(): boolean;
   public abstract navigateUp(): boolean;
   public abstract navigate(wrap: Function, proceed: Function): boolean;

@@ -44,9 +44,13 @@ export abstract class Action<ResultType extends Result> extends hyper.Component 
     return true;
   }
 
+  public renderIfVisible(): HTMLElement {
+    return this.html`<li><a onclick="${this}"><img src="${this.icon}" alt="${this.name}" /></a></li>`
+  }
+
   public render() {
-    return this.state["visible"]
-        ? this.html`<li><a onclick="${this}"><img src="${this.icon}" alt="${this.name}" /></a></li>`
+    return this.visible
+        ? this.renderIfVisible()
         : this.html``;
   }
 }

@@ -23,11 +23,15 @@ export class ResultBox extends ResultGroup<BaseResult> {
     return nestedResult;
   }
 
+  public score(query: string): number {
+    return Infinity;
+  }
+
   public ondblclick(evt: MouseEvent) {
     evt.preventDefault();
   }
 
-  render() {
+  renderIfVisible() {
     return hyper`
 <table id="${this.id}" onclick="${this}" ondblclick="${this}" class="results" cellspacing="0" cellpadding="0">
   <thead>
@@ -45,8 +49,8 @@ export class ResultBox extends ResultGroup<BaseResult> {
     Mousetrap.bind("down", () => {this.navigateDown(); return false});
 
     // TODO(mb): Better paging.
-    Mousetrap.bind("pageup", () => {for (let i = 0; i < 10; i++) { this.navigateUp(); }; return false});
-    Mousetrap.bind("pagedown", () => {for (let i = 0; i < 10; i++) { this.navigateDown(); }; return false});
+    Mousetrap.bind("pageup", () => {for (let i = 0; i < 10; i++) { this.navigateUp(); } return false});
+    Mousetrap.bind("pagedown", () => {for (let i = 0; i < 10; i++) { this.navigateDown(); } return false});
 
     Mousetrap.bind("enter", () => {this.activate(); return false});
   }

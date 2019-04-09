@@ -14,7 +14,7 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
   public search(query: string): Promise<LocalFileResult[]> {
     console.log("Searching Windows for " + query);
     let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
-    return searchResults.then(results => results.filter(r => r && r.matches(query)));
+    return searchResults;
   }
 
   private cachedSearch(query: string): Promise<LocalFileResult[]>|undefined {

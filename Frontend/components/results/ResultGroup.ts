@@ -17,8 +17,8 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     this.name = name;
   }
 
-  public matches(query: string): boolean {
-    return true;  // Groups always match; empty groups are suppressed elsewhere.
+  public score(query: string): number {
+    return this.children.size();
   }
 
   public highlight(query: string): void {
@@ -50,6 +50,10 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     }
     this.render();
     return this;
+  }
+
+  public getChildren() {
+    return this.children.immutableView();
   }
 
   /** Take the default (first) action on this element. */
@@ -165,7 +169,7 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     }
   }
 
-  public render() {
+  public renderIfVisible() {
     return this.html`
         <tbody id="${this.id}" onclick="${this}" ondblclick="${this}">
           <tr>
