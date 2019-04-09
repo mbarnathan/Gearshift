@@ -1,8 +1,9 @@
 import hyper from "hyperhtml";
 import {Result} from "../results/Result";
 import * as _ from "lodash";
+import {CanHide} from "../../capabilities/CanHide";
 
-export abstract class Action<ResultType extends Result> extends hyper.Component {
+export abstract class Action<ResultType extends Result> extends hyper.Component implements CanHide {
   protected _name?: string;
 
   public constructor(protected readonly parent: ResultType) {
@@ -34,7 +35,7 @@ export abstract class Action<ResultType extends Result> extends hyper.Component 
   }
 
   public set visible(visible: boolean) {
-    this.state["visible"] = visible;
+    this.setState({visible: visible});
   }
 
   public abstract launch(): void;

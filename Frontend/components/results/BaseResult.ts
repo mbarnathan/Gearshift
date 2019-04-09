@@ -4,7 +4,7 @@ import hyper from "hyperhtml";
 import * as _ from "lodash";
 import {CanHide} from "../../capabilities/CanHide";
 
-export abstract class BaseResult extends hyper.Component implements Focusable, CanHide {
+export abstract class BaseResult extends hyper.Component implements Focusable {
   public name: string;
   public element: HTMLElement;
   public readonly actions: Action<any>[];
@@ -12,17 +12,8 @@ export abstract class BaseResult extends hyper.Component implements Focusable, C
   get defaultState() {
     return {
       focused: false,
-      visible: true,
       actions: this.actions
     };
-  }
-
-  public get visible(): boolean {
-    return this.state["visible"];
-  }
-
-  public set visible(show: boolean) {
-    this.setState({visible: show});
   }
 
   public get id():string {
