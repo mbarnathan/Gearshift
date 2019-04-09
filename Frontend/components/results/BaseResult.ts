@@ -2,7 +2,6 @@ import {Action} from "../actions/Action";
 import {Focusable} from "../../capabilities/Focusable";
 import hyper from "hyperhtml";
 import * as _ from "lodash";
-import {CanHide} from "../../capabilities/CanHide";
 
 export abstract class BaseResult extends hyper.Component implements Focusable {
   public name: string;

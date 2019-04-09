@@ -7,18 +7,14 @@ import * as trieMapping from "trie-mapping";
 
 let fs = require("fs");
 
-export class WindowsSearch implements SearchProvider<LocalFileResult> {
-  readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Windows Search");
-  readonly cached_results = trieMapping();
+export class WindowsSearch extends SearchProvider<LocalFileResult> {
+  public readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Windows Search");
+  private readonly cached_results = trieMapping();
 
   public search(query: string): Promise<LocalFileResult[]> {
     console.log("Checking Windows search cache for " + query);
     let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
     return searchResults;
-  }
-
-  public default(): Promise<LocalFileResult[]> {
-    return Promise.resolve([]);
   }
 
   private cachedSearch(query: string): Promise<LocalFileResult[]>|undefined {
@@ -35,8 +31,9 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
 
   private windowsSearch(query: string): Promise<LocalFileResult[]> {
     console.log("Cache miss; really searching Windows for " + query);
-    const searchWorkers = requireTaskPool(require.resolve('./multiprocess_worker'));
+    this.progress();
 
+    const searchWorkers = requireTaskPool(require.resolve('./multiprocess_worker'));
     let transformAndCache = searchResults => {
       let transformed = searchResults.map(WindowsSearch.transformResult);
       this.cached_results.set(query, transformed);

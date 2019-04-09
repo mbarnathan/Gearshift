@@ -1,6 +1,7 @@
 import {BaseResult} from "./BaseResult";
 import * as _ from "lodash";
 
+// TODO(mb): This holds too much information. It should be called Document and BaseResult should be more complete.
 export class Result extends BaseResult {
   public _service?: string;
   private _highlit_name?: string[];
