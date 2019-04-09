@@ -12,9 +12,13 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
   readonly cached_results = trieMapping();
 
   public search(query: string): Promise<LocalFileResult[]> {
-    console.log("Searching Windows for " + query);
+    console.log("Checking Windows search cache for " + query);
     let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
     return searchResults;
+  }
+
+  public default(): Promise<LocalFileResult[]> {
+    return Promise.resolve([]);
   }
 
   private cachedSearch(query: string): Promise<LocalFileResult[]>|undefined {
@@ -23,6 +27,7 @@ export class WindowsSearch implements SearchProvider<LocalFileResult> {
         (a, b) => b[0].length - a[0].length
     );
     if (prefixes.length > 0) {
+      console.log("Windows cache hit for " + query);
       return Promise.resolve(prefixes[0][1]);
     }
     return undefined;

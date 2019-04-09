@@ -13,7 +13,6 @@ export class SearchMapper {
   }
 
   register(searcher: SearchProvider<any>): SearchMapper {
-    this.parent.add(searcher.heading);
     this.searchers.add(searcher);
     return this;
   }
@@ -38,7 +37,8 @@ export class SearchMapper {
 
   private static populate(heading: ResultGroup<any>, results: BaseResult[], query: string) {
     let [sorted, scores] = SearchMapper.score(results, query);
-    console.debug("Populating " + heading.id + " with " + _.map(sorted, "id"));
+    sorted = sorted || [];
+    console.log("Populating " + heading.id + " with " + sorted.length + " items");
     heading.replace(...sorted);
     heading.highlight(query);
   }
@@ -50,20 +50,15 @@ export class SearchMapper {
 
   private search(event: JQuery.Event) {
     let query = ($(this.searchInput).val() || "").toString();
-    if (!query) {
-      return;
-    }
-    console.log("Searching for " + query);
+    console.log(query ? ("Searching for " + query) : "Using default result set");
     let promises: Promise<void>[] = [...this.searchers].map(
-        searcher => searcher
-            .search(query)
+        searcher => (query ? searcher.search(query) : searcher.default())
             .then(results => SearchMapper.populate(searcher.heading, results, query))
     );
 
-    /*
     // Once all searchers are done, sort their headers within the parent.
     Promise.all(promises).then(() => SearchMapper.populate(
         this.parent, [...this.searchers].map(s => s.heading), query)
-    );*/
+    );
   }
 }

@@ -32,7 +32,7 @@ export class ResultBox extends ResultGroup<BaseResult> {
   }
 
   render() {
-    return hyper`
+    return this.html`
 <table id="${this.id}" onclick="${this}" ondblclick="${this}" class="results" cellspacing="0" cellpadding="0">
   <thead>
     <tr>
