@@ -62,11 +62,7 @@ export abstract class BaseResult extends hyper.Component implements Focusable, C
     }
   }
 
-  public render(): HTMLElement {
-    return this.visible ? this.renderIfVisible() : this.html``;
-  }
-
-  public abstract renderIfVisible(): HTMLElement;
+  public abstract render(): HTMLElement;
   public abstract navigateDown(): boolean;
   public abstract navigateUp(): boolean;
   public abstract navigate(wrap: Function, proceed: Function): boolean;

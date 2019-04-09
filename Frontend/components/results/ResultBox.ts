@@ -31,7 +31,7 @@ export class ResultBox extends ResultGroup<BaseResult> {
     evt.preventDefault();
   }
 
-  renderIfVisible() {
+  render() {
     return hyper`
 <table id="${this.id}" onclick="${this}" ondblclick="${this}" class="results" cellspacing="0" cellpadding="0">
   <thead>

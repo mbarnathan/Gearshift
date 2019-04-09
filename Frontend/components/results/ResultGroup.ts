@@ -169,7 +169,7 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     }
   }
 
-  public renderIfVisible() {
+  public render() {
     return this.html`
         <tbody id="${this.id}" onclick="${this}" ondblclick="${this}">
           <tr>
