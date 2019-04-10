@@ -32,9 +32,10 @@ export class ProgressResult extends Result {
 
   public render() {
     return this.html`
-        <tr class="${this.focused() ? "focused" : "unfocused"}" id="${this.id}">
+        <tr class="progress" id="${this.id}">
           <td class="thumbnail"><div class="lds-ripple"><div></div><div></div></div></td>
-          <td class="filename" colspan="1000">Loading...</td>
+          <td class="filename">Loading...</td>
+          <td colspan="1000"></td>
         </tr>
     `;
   }
