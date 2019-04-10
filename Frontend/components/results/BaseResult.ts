@@ -20,7 +20,7 @@ export abstract class BaseResult extends hyper.Component implements Focusable {
   }
 
   public score(query: string): number {
-    return (this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase()) ||
+    return !query || (this.name.toLocaleLowerCase().startsWith(query.toLocaleLowerCase()) ||
         new RegExp(`${query}`, "iu").test(this.name))
         ? 1.0
         : 0.0;

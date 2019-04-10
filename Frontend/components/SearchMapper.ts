@@ -51,7 +51,7 @@ export class SearchMapper {
   private search(event: JQuery.Event) {
     let query = ($(this.searchInput).val() || "").toString();
     console.log(query ? ("Searching for " + query) : "Using default result set");
-    let promises: Promise<void>[] = [...this.searchers].map(
+    let promises: PromiseLike<void>[] = [...this.searchers].map(
         searcher => (query ? searcher.search(query) : searcher.default())
             .then(results => SearchMapper.populate(searcher.heading, results, query))
     );

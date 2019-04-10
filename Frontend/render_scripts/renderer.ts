@@ -66,7 +66,9 @@ if (!searchBox) {
 let mapper = new SearchMapper(searchBox, results);
 if (process.platform.startsWith("win")) {
   let winsearch = require("../components/searchproviders/local/windows/WindowsSearch");
+  let winrecent = require("../components/searchproviders/local/windows/WindowsRecents");
   mapper.register(new winsearch.WindowsSearch());
+  mapper.register(new winrecent.WindowsRecents());
 }
 
 results.bind(document.getElementById("result_container"));

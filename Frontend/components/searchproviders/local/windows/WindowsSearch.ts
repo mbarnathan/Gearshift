@@ -11,13 +11,13 @@ export class WindowsSearch extends SearchProvider<LocalFileResult> {
   public readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Windows Search");
   private readonly cached_results = trieMapping();
 
-  public search(query: string): Promise<LocalFileResult[]> {
+  public search(query: string): PromiseLike<LocalFileResult[]> {
     console.log("Checking Windows search cache for " + query);
     let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
     return searchResults;
   }
 
-  private cachedSearch(query: string): Promise<LocalFileResult[]>|undefined {
+  private cachedSearch(query: string): PromiseLike<LocalFileResult[]>|undefined {
     // Prefer the longest cached result.
     let prefixes = this.cached_results.getPrefixesOf(query).sort(
         (a, b) => b[0].length - a[0].length
@@ -29,7 +29,7 @@ export class WindowsSearch extends SearchProvider<LocalFileResult> {
     return undefined;
   }
 
-  private windowsSearch(query: string): Promise<LocalFileResult[]> {
+  private windowsSearch(query: string): PromiseLike<LocalFileResult[]> {
     console.log("Cache miss; really searching Windows for " + query);
     this.progress();
 

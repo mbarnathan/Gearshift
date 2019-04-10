@@ -14,10 +14,10 @@ export abstract class SearchProvider<ResultType extends BaseResult> {
    * @param query the search query
    * @return A Promise with Results for the query.
    */
-  public abstract search(query: string): Promise<ResultType[]>;
+  public abstract search(query: string): PromiseLike<ResultType[]>;
 
   /** What to return when there's no query entered. Defaults to nothing. */
-  public default(): Promise<ResultType[]> {
+  public default(): PromiseLike<ResultType[]> {
     return Promise.resolve([]);
   }
 
