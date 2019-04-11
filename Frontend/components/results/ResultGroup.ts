@@ -5,6 +5,7 @@ const LinkedMap = require("linked-map");
 export class ResultGroup<Child extends BaseResult> extends BaseResult {
   protected children = new LinkedMap();
   protected focusedChild: Child | null = null;
+  private _score?: number;
 
   get defaultState() {
     let state = super.defaultState;
@@ -12,13 +13,18 @@ export class ResultGroup<Child extends BaseResult> extends BaseResult {
     return state;
   }
 
-  public constructor(name: string) {
+  public constructor(name: string, score?: number) {
     super();
     this.name = name;
+    this._score = score;
   }
 
   public score(query: string): number {
-    return this.children.size();
+    return this.children.size() == 0 ? 0 : (this._score || this.children.size());
+  }
+
+  public setScore(score: number) {
+    this._score = score;
   }
 
   public highlight(query: string): void {

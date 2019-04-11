@@ -25,6 +25,7 @@
     "@types/lodash": "^4.14.123",
     "@types/mime": "^2.0.1",
     "@types/mousetrap": "^1.6.1",
+    "@types/touch": "^3.1.1",
     "electron": "^4.1.0",
     "electron-rebuild": "^1.8.4",
     "tslint": "^5.14.0",
@@ -50,6 +51,7 @@
     "mousetrap": "^1.6.3",
     "oledb-electron": "^1.0.0",
     "sqlstring": "^2.3.1",
+    "touch": "^3.1.0",
     "trie-mapping": "^1.0.1"
   }
 }

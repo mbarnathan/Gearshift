@@ -1,8 +1,8 @@
-import {SearchProvider} from "../capabilities/SearchProvider";
 import {ResultGroup} from "./results/ResultGroup";
 import * as $ from "jquery";
 import * as _ from "lodash";
 import {BaseResult} from "./results/BaseResult";
+import {SearchProvider} from "./searchproviders/SearchProvider";
 
 export class SearchMapper {
   private searchers = new Set<SearchProvider<any>>();
@@ -50,9 +50,9 @@ export class SearchMapper {
 
   private search(event: JQuery.Event) {
     let query = ($(this.searchInput).val() || "").toString();
-    console.log(query ? ("Searching for " + query) : "Using default result set");
+    console.log("Searching for " + (query || "(empty)"));
     let promises: PromiseLike<void>[] = [...this.searchers].map(
-        searcher => (query ? searcher.search(query) : searcher.default())
+        searcher => searcher.search(query)
             .then(results => SearchMapper.populate(searcher.heading, results, query))
     );
 

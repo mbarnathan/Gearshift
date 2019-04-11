@@ -1,44 +1,23 @@
 import {requireTaskPool} from "electron-remote";
 import {LocalFileResult} from "../../../results/services/LocalFileResult";
-import {SearchProvider} from "../../../../capabilities/SearchProvider";
 import {ResultGroup} from "../../../results/ResultGroup";
 import {Builder} from "builder-pattern";
-import * as trieMapping from "trie-mapping";
+import {CachedSearchProvider} from "../../CachedSearchProvider";
 
 let fs = require("fs");
 
-export class WindowsSearch extends SearchProvider<LocalFileResult> {
+export class WindowsSearch extends CachedSearchProvider<LocalFileResult> {
   public readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Windows Search");
-  private readonly cached_results = trieMapping();
 
-  public search(query: string): PromiseLike<LocalFileResult[]> {
-    console.log("Checking Windows search cache for " + query);
-    let searchResults = this.cachedSearch(query) || this.windowsSearch(query);
-    return searchResults;
-  }
-
-  private cachedSearch(query: string): PromiseLike<LocalFileResult[]>|undefined {
-    // Prefer the longest cached result.
-    let prefixes = this.cached_results.getPrefixesOf(query).sort(
-        (a, b) => b[0].length - a[0].length
-    );
-    if (prefixes.length > 0) {
-      console.log("Windows cache hit for " + query);
-      return Promise.resolve(prefixes[0][1]);
+  protected uncachedSearch(query: string): PromiseLike<LocalFileResult[]> {
+    if (!query) {
+      return Promise.resolve([]);
     }
-    return undefined;
-  }
 
-  private windowsSearch(query: string): PromiseLike<LocalFileResult[]> {
-    console.log("Cache miss; really searching Windows for " + query);
     this.progress();
 
     const searchWorkers = requireTaskPool(require.resolve('./multiprocess_worker'));
-    let transformAndCache = searchResults => {
-      let transformed = searchResults.map(WindowsSearch.transformResult);
-      this.cached_results.set(query, transformed);
-      return transformed;
-    };
+    let transformAndCache = searchResults => searchResults.map(WindowsSearch.transformResult);
 
     return searchWorkers
         .search(query)
@@ -51,7 +30,7 @@ export class WindowsSearch extends SearchProvider<LocalFileResult> {
       return undefined;
     }
 
-    // TODO(mb): Look into parallelizing or deferring stats if slow.
+    // This appears to happen faster sequentially than asynchronously.
     let stat;
     try {
       stat = fs.statSync(result["SYSTEM.ITEMPATHDISPLAY"]);

@@ -1,6 +1,6 @@
-import {ResultGroup} from "../components/results/ResultGroup";
-import {BaseResult} from "../components/results/BaseResult";
-import {ProgressResult} from "../components/results/special/ProgressResult";
+import {ResultGroup} from "../../components/results/ResultGroup";
+import {BaseResult} from "../../components/results/BaseResult";
+import {ProgressResult} from "../../components/results/special/ProgressResult";
 
 export abstract class SearchProvider<ResultType extends BaseResult> {
   // TODO(mbarnathan): Merge groups with the same name?
@@ -11,15 +11,10 @@ export abstract class SearchProvider<ResultType extends BaseResult> {
    * Searches for something and returns a promise that returns results.
    * Not necessarily side-effect free; might temporarily put up a progress bar.
    *
-   * @param query the search query
+   * @param query the search query. Can be empty if there is no query specified!
    * @return A Promise with Results for the query.
    */
   public abstract search(query: string): PromiseLike<ResultType[]>;
-
-  /** What to return when there's no query entered. Defaults to nothing. */
-  public default(): PromiseLike<ResultType[]> {
-    return Promise.resolve([]);
-  }
 
   /**
    * Shows/updates a progress bar in the header.

@@ -1,28 +1,31 @@
 import {LocalFileResult} from "../../../results/services/LocalFileResult";
-import {SearchProvider} from "../../../../capabilities/SearchProvider";
 import {ResultGroup} from "../../../results/ResultGroup";
 import {Builder} from "builder-pattern";
 import * as path from "path";
 import * as mime from "mime";
 import * as Promise from "bluebird";
+import {CachedSearchProvider} from "../../CachedSearchProvider";
 
 let fs = require("fs");
 Promise.promisifyAll(fs);
 
-export class WindowsRecents extends SearchProvider<LocalFileResult> {
-  public readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Recent Files");
+export class WindowsRecents extends CachedSearchProvider<LocalFileResult> {
+  public readonly heading: ResultGroup<LocalFileResult> = new ResultGroup("Recent Files", Infinity);
   private readonly search_path: string = path.join(
       process.env.APPDATA!, "Microsoft", "Windows", "Recent");
 
-  public default(): PromiseLike<LocalFileResult[]> {
+  protected uncachedSearch(query: string): PromiseLike<LocalFileResult[]> {
     return fs.readdirAsync(this.search_path).then(
         searchResults => searchResults.map(
-            file => WindowsRecents.transformResult(this.search_path, file))
+            file => WindowsRecents
+                .transformResult(this.search_path, file))
+                .sort((a, b) => b.accessed.getTime() - a.accessed.getTime())
     );
   }
 
-  public search(query: string): PromiseLike<LocalFileResult[]> {
-    return Promise.resolve([]);
+  // There is only one cache entry for this class.
+  protected writeCache(query: string, results: LocalFileResult[]) {
+    super.writeCache("", results);
   }
 
   private static transformResult(pathname: string, filename: string): LocalFileResult|undefined {
@@ -32,7 +35,7 @@ export class WindowsRecents extends SearchProvider<LocalFileResult> {
 
     let result = path.join(pathname, filename);
 
-    // TODO(mb): Look into parallelizing or deferring stats if slow.
+    // This appears to be faster synchronously than asynchronously?
     let stat;
     try {
       stat = fs.statSync(result);
@@ -44,7 +47,7 @@ export class WindowsRecents extends SearchProvider<LocalFileResult> {
 
     // Start with the data from the index, but it might be out of date.
     return Builder(LocalFileResult)
-        .name(filename)
+        .name(filename.replace(".lnk", ""))
         .mimetype(mime.getType(result) || "")
         .path(result)
         .size(stat.size)
