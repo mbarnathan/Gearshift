@@ -10,13 +10,13 @@ from dropbox.files import Metadata_validator, PhotoMetadata, DeletedMetadata
 from evanesca.common.logging.elog import L
 from quart import json
 
-ACCOUNT_TOKEN = "EdTy1lJN1oIAAAAAAAAAkAqpN88_8VcZ2EgdRNHDV-9jqPbQjbNvO-sUM9537YqY"
+ACCOUNT_TOKEN = "token"
 LIMIT_PER_CALL = 500
 ROOT = ""
 
 
 class DropboxClient:
-    SALT = "h*rRcBsU0Cd`e*~9"
+    SALT = "salt"
 
     def __init__(self, token=ACCOUNT_TOKEN):
         self.dbx = dropbox.Dropbox(token)
