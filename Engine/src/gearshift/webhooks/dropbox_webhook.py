@@ -17,7 +17,7 @@ from gearshift.engine.intake.dropbox.serializer import DropboxSerializer
 
 LEASE_EXPIRY_MS = 60000
 FIREBASE_PROJECT = "gearshift"
-APP_SECRET = bytearray("h0uy9dd01xzl5k8", "utf-8")
+APP_SECRET = bytearray("secret", "utf-8")
 
 
 @api("/dropbox")
