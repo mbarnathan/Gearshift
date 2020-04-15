@@ -1,2 +1,2 @@
 # gearshift
-This is a prototype of an Alfred-like app.
+This is an incomplete prototype of an Alfred-like app, frontend and backend.
